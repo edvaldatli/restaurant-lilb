@@ -1,0 +1,7 @@
+import Image from "next/image"
+
+export default function LogoCard() {
+    return (
+        <Image src={"/logo-no-background.png"} height={500} width={500} alt="Logo" className="h-full w-full"></Image>
+    )
+}

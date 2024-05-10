@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="h-screen">
+      <body className="md:h-screen">
         <LocalStorageProvider>
           <StepStatusBar />
           <div className="md:px-56">{children}</div>
