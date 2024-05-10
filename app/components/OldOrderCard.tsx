@@ -11,7 +11,7 @@ export default function OldOrderCard() {
       </p>
       <div className="flex flex-col">
         <label htmlFor="input" className="font-bold">
-          E-mail
+          E-mail address:
         </label>
         <input
           type="email"
