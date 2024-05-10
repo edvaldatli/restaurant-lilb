@@ -25,7 +25,7 @@ export default function ImageCarousel({ images }: ImageCarouselTypes) {
       {images.map((image) => {
         return (
           <div key={image} className="max-h-full">
-            <img src={image} className=" h-96 object-cover w-full" />
+            <img src={image} className="object-cover w-full" />
           </div>
         );
       })}
