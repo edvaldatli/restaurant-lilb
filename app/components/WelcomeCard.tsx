@@ -42,9 +42,9 @@ export default function WelcomeCard() {
             </p>
             <Link
               href={"/dishes"}
-              className="flex items-center h-10 p-4 rounded-xl font-bold text-white bg-green-600 hover:bg-request-green transition-colors"
+              className="flex justify-center items-center h-20 p-4 w-48 rounded-xl text-xl font-bold text-white bg-green-600 drop-shadow-xl hover:bg-request-green transition-colors text-nowrap"
             >
-              Start Ordering
+              Order
             </Link>
           </div>
         </div>
