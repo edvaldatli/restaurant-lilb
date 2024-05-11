@@ -7,7 +7,7 @@ type ButtonParamTypes = {
   className?: string;
 };
 
-const routes = [
+const routeFlow = [
   { currentRoute: "/", nextRoute: "/dishes" },
   { currentRoute: "/dishes", nextRoute: "/drinks" },
   { currentRoute: "/drinks", nextRoute: "/order" },
@@ -22,7 +22,7 @@ export default function NextStepButton({
   const currentRoute = usePathname();
 
   const handleNextRoute = () => {
-    const nextRoute = routes.find(
+    const nextRoute = routeFlow.find(
       (route) => route.currentRoute === currentRoute
     )?.nextRoute;
     if (nextRoute) {

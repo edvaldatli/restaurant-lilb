@@ -1,8 +1,8 @@
 "use client";
 import { AnimatePresence, motion, stagger, useAnimate } from "framer-motion";
-import DishesCard from "../components/dishesComponents/DishesCard";
 import { useEffect } from "react";
 import NextStepButton from "../components/NextStepButton";
+import DrinksCard from "../components/drinksComponents/DrinksCard";
 
 export default function DrinksPage() {
   const [scope, animate] = useAnimate();
@@ -11,17 +11,17 @@ export default function DrinksPage() {
   });
   return (
     <div
-      className="grid grid-cols-3 grid-row-3 h-screen gap-8 pt-32 pb-8 text-white drop-shadow-lg"
+      className="grid grid-cols-3 grid-row-3 h-full gap-8 text-white drop-shadow-lg"
       ref={scope}
     >
       <AnimatePresence>
         <motion.div
           key={"Dishes card"}
-          className="col-span-2 row-span-3 bg-request-orange rounded-xl"
+          className="col-span-2 row-span-3 bg-request-orange rounded-xl overflow-y-scroll"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
-          <DishesCard />
+          <DrinksCard />
         </motion.div>
         <motion.div
           key={"Next step card"}

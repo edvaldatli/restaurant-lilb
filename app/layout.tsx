@@ -19,10 +19,12 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
       </head>
-      <body className="md:h-screen">
+      <body className="">
         <LocalStorageProvider>
           <StepStatusBar />
-          <div className="px-4 lg:px-2 2xl:px-96">{children}</div>
+          <div className="px-4 lg:px-2 2xl:px-96 pt-6 pb-8 lg:pt-32 h-screen">
+            {children}
+          </div>
         </LocalStorageProvider>
       </body>
     </html>

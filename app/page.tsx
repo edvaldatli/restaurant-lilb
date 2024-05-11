@@ -29,7 +29,8 @@ export default function Home() {
 
   return (
     <div
-      className="grid lg:grid-rows-4 lg:grid-cols-3 lg:max-h-screen overflow-hidden w-full gap-8 pt-6 lg:pt-32 pb-8 p-4 text-white"
+      id="homewrapper"
+      className="grid lg:grid-rows-4 lg:grid-cols-3 h-full w-full text-white gap-6"
       ref={scope}
     >
       <AnimatePresence>
@@ -46,7 +47,7 @@ export default function Home() {
         <motion.div
           id="card"
           key={"Logo card"}
-          className="lg:block col-span-2 lg:col-span-1 lg:row-span-2 bg-request-orange rounded-xl p-6 w-full max-h-48 lg:max-h-none"
+          className="lg:block col-span-2 lg:col-span-1 lg:row-span-2 bg-request-orange rounded-xl p-6 w-full"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
