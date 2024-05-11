@@ -29,7 +29,7 @@ export default function Home() {
 
   return (
     <div
-      className="grid lg:grid-rows-4 lg:grid-cols-3 lg:max-h-screen overflow-hidden w-full gap-8 pt-6 lg:pt-32 pb-4 p-4 text-white"
+      className="grid lg:grid-rows-4 lg:grid-cols-3 lg:max-h-screen overflow-hidden w-full gap-8 pt-6 lg:pt-32 pb-8 p-4 text-white"
       ref={scope}
     >
       <AnimatePresence>
