@@ -71,7 +71,6 @@ export default function StepStatusBar() {
                 onClick={() => router.back()}
               >
                 <FaAngleLeft />
-                Back
               </button>
             </motion.div>
           </AnimatePresence>

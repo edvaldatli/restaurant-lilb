@@ -20,27 +20,16 @@ const images: string[] = [
   "/carouselImages/image3.jpg",
 ];
 
-var settings = {
-  infinite: true,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: false,
-  autoplay: true,
-  dots: false,
-};
 export default function Home() {
   const [scope, animate] = useAnimate();
 
   useEffect(() => {
-    // This "li" selector will only select children
-    // of the element that receives `scope`.
     animate("#card", { opacity: 1 }, { delay: stagger(0.04) });
   }, []);
-  console.log(scope);
+
   return (
     <div
-      className="grid lg:grid-rows-4 lg:grid-cols-3 lg:max-h-screen overflow-hidden w-full gap-8 pt-32 pb-4 p-4 text-white"
+      className="grid lg:grid-rows-4 lg:grid-cols-3 lg:max-h-screen overflow-hidden w-full gap-8 pt-6 lg:pt-32 pb-4 p-4 text-white"
       ref={scope}
     >
       <AnimatePresence>

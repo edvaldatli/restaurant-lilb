@@ -4,7 +4,7 @@ import DishesCard from "../components/dishesComponents/DishesCard";
 import { useEffect } from "react";
 import NextStepButton from "../components/NextStepButton";
 
-export default function DishesPage() {
+export default function DrinksPage() {
   const [scope, animate] = useAnimate();
   useEffect(() => {
     animate("div", { opacity: 1 }, { delay: stagger(0.04) });
@@ -31,7 +31,7 @@ export default function DishesPage() {
         >
           <div className="flex flex-col justify-end h-full p-4">
             <NextStepButton
-              text="Proceed to drinks"
+              text="Proceed to order"
               className="flex flex-row justify-center items-center bg-green-700 p-8 rounded-xl text-3xl font-semibold hover:bg-green-500 transition-colors"
             />
           </div>
