@@ -3,6 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FaAngleLeft } from "react-icons/fa";
 import Number from "./Number";
 import { AnimatePresence, motion } from "framer-motion";
+import RoutingButton from "./RoutingButton";
 
 export default function StepStatusBar() {
   const navItems = [
@@ -18,7 +19,7 @@ export default function StepStatusBar() {
 
   return (
     <>
-      <nav className="hidden lg:flex flex-row justify-center items-center text-2xl text-white font-bold h-24 w-full bg-request-orange fixed z-20">
+      <nav className="hidden lg:flex flex-row justify-center items-center text-xl text-white font-bold h-14 w-full bg-request-orange fixed z-20">
         {path !== "/" && (
           <AnimatePresence>
             <motion.div
@@ -30,13 +31,11 @@ export default function StepStatusBar() {
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <button
-                className="flex flex-row gap-2 justify-center items-center  transition h-12 p-4 rounded-xl"
-                onClick={() => router.back()}
-              >
-                <FaAngleLeft />
-                Back
-              </button>
+              <RoutingButton
+                type="back"
+                className="flex flex-row items-center"
+                text="Back"
+              />
             </motion.div>
           </AnimatePresence>
         )}

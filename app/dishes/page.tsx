@@ -2,7 +2,7 @@
 import { AnimatePresence, motion, stagger, useAnimate } from "framer-motion";
 import DishesCard from "../components/dishesComponents/DishesCard";
 import { useEffect } from "react";
-import NextStepButton from "../components/NextStepButton";
+import RoutingButton from "../components/RoutingButton";
 
 export default function DishesPage() {
   const [scope, animate] = useAnimate();
@@ -32,9 +32,10 @@ export default function DishesPage() {
           animate={{ opacity: 1, translateX: 0 }}
         >
           <div className="flex flex-col justify-end h-full p-4">
-            <NextStepButton
+            <RoutingButton
               text="Proceed to drinks"
               className="flex flex-row justify-center items-center bg-green-700 p-8 rounded-xl text-3xl font-semibold hover:bg-green-500 transition-colors"
+              type="forward"
             />
           </div>
         </motion.div>

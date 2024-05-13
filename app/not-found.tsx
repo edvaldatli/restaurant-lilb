@@ -6,7 +6,7 @@ import { delay, motion } from "framer-motion";
 
 export default function NotFound() {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-full">
       <motion.div
         initial={{ opacity: 0, translateX: -80 }}
         animate={{ opacity: 1, translateX: 0 }}

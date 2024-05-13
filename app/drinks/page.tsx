@@ -1,14 +1,28 @@
 "use client";
 import { AnimatePresence, motion, stagger, useAnimate } from "framer-motion";
-import { useEffect } from "react";
-import NextStepButton from "../components/NextStepButton";
+import { useEffect, useState } from "react";
+import RoutingButton from "../components/RoutingButton";
 import DrinksCard from "../components/drinksComponents/DrinksCard";
+import { useOrder } from "../context/OrderContext";
+import { CocktailType } from "../types/CocktailType";
 
 export default function DrinksPage() {
+  const { updateDishes } = useOrder();
+  const [drinks, setDrinks] = useState<string[]>([]);
+
+  const handleClickDrink = (cocktail: CocktailType) => {
+    setDrinks((rest) => [...rest, cocktail.idDrink]);
+  };
+
+  useEffect(() => {
+    console.log(drinks);
+  }, [drinks]);
+
   const [scope, animate] = useAnimate();
   useEffect(() => {
     animate("div", { opacity: 1 }, { delay: stagger(0.04) });
   });
+
   return (
     <div
       className="grid grid-cols-3 grid-row-3 h-full gap-8 text-white drop-shadow-lg"
@@ -21,7 +35,7 @@ export default function DrinksPage() {
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
-          <DrinksCard />
+          <DrinksCard handleClick={handleClickDrink} />
         </motion.div>
         <motion.div
           key={"Next step card"}
@@ -30,9 +44,10 @@ export default function DrinksPage() {
           animate={{ opacity: 1, translateX: 0 }}
         >
           <div className="flex flex-col justify-end h-full p-4">
-            <NextStepButton
+            <RoutingButton
               text="Proceed to order"
-              className="flex flex-row justify-center items-center bg-green-700 p-8 rounded-xl text-3xl font-semibold hover:bg-green-500 transition-colors"
+              className="flex flex-row justify-center items-center bg-green-700 p-8 rounded-xl text-xl text- font-semibold hover:bg-green-500 transition-colors"
+              type="forward"
             />
           </div>
         </motion.div>
