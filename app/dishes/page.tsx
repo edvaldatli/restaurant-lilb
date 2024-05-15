@@ -11,7 +11,7 @@ export default function DishesPage() {
   });
   return (
     <div
-      className="grid grid-cols-3 grid-row-3 h-full gap-8 text-white drop-shadow-lg"
+      className="grid lg:grid-cols-3 lg:grid-row-3 h-full gap-8 text-white drop-shadow-lg"
       ref={scope}
     >
       <AnimatePresence>

@@ -19,7 +19,7 @@ export default function StepStatusBar() {
 
   return (
     <>
-      <nav className="hidden lg:flex flex-row justify-center items-center text-xl text-white font-bold h-14 w-full bg-request-orange fixed z-20">
+      <nav className="hidden lg:flex flex-row justify-center items-center text-xl text-white font-bold h-14 w-screen bg-request-orange fixed z-20">
         {path !== "/" && (
           <AnimatePresence>
             <motion.div

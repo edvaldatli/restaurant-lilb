@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import RoutingButton from "../components/RoutingButton";
 import DrinksCard from "../components/drinksComponents/DrinksCard";
 import { useOrder } from "../context/OrderContext";
-import { CocktailType } from "../types/CocktailType";
+import { CocktailType } from "../types/types";
 
 export default function DrinksPage() {
   const { updateDishes } = useOrder();

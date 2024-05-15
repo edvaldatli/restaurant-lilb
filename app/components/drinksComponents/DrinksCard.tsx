@@ -5,7 +5,7 @@ import debounce from "lodash/debounce";
 import Image from "next/image";
 import CocktailPlaceholder from "./CocktailPlaceholder";
 import CocktailImage from "./CocktailImage";
-import { CocktailType } from "../../types/CocktailType";
+import { CocktailType } from "../../types/types";
 
 type Props = {
   handleClick: (cocktail: CocktailType) => void;
@@ -30,13 +30,6 @@ export default function DrinksCard({ handleClick }: Props) {
     );
     const data = await response.json();
     setResults(data.drinks);
-  };
-
-  const generateRandomPrice = ({ min, max, increment }: RandomType) => {
-    const numSteps = (max - min) / increment + 1;
-    const step = Math.floor(Math.random() * numSteps);
-
-    return min + step * increment;
   };
 
   useEffect(() => {
