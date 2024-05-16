@@ -71,7 +71,7 @@ export default function DishesCard() {
       <Reorder.Group
         values={displayDishes}
         onReorder={setDisplayDishes}
-        className="flex flex-row flex-wrap justify-center gap-4 text-black"
+        className="flex flex-row flex-wrap gap-4 text-black h-full"
       >
         <AnimatePresence>
           {displayDishes.map((dish) => (

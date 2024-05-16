@@ -3,6 +3,7 @@ export type CocktailType = {
   strDrink: string;
   strDrinkThumb: string;
   strCategory: string;
+  price: number;
 };
 
 export type DishType = {
@@ -13,4 +14,4 @@ export type DishType = {
   available: boolean;
   price: number;
   ingredients: string;
-}
+};

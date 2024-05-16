@@ -4,13 +4,14 @@ import { FaAngleLeft } from "react-icons/fa";
 import Number from "./Number";
 import { AnimatePresence, motion } from "framer-motion";
 import RoutingButton from "./RoutingButton";
+import Link from "next/link";
 
 export default function StepStatusBar() {
   const navItems = [
     { path: "/", label: "Home", number: 1 },
     { path: "/dishes", label: "Dishes", number: 2 },
     { path: "/drinks", label: "Drinks", number: 3 },
-    { path: "/order", label: "Order", number: 4 },
+    { path: "/review", label: "Order", number: 4 },
   ];
 
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function StepStatusBar() {
 
   return (
     <>
-      <nav className="hidden lg:flex flex-row justify-center items-center text-xl text-white font-bold h-14 w-screen bg-request-orange fixed z-20">
+      <nav className="hidden lg:flex flex-row justify-center items-center text-xl text-white font-bold h-14 w-screen bg-request-orange fixed z-20 select-none">
         {path !== "/" && (
           <AnimatePresence>
             <motion.div
@@ -41,7 +42,8 @@ export default function StepStatusBar() {
         )}
         {navItems.map((item) => {
           return (
-            <span
+            <Link
+              href={item.path}
               key={item.number}
               className={`flex h-full items-center px-16 gap-2 hover:bg-request-red transition-colors ${
                 path === item.path ? "bg-zinc-800" : ""
@@ -49,7 +51,7 @@ export default function StepStatusBar() {
             >
               <Number number={item.number} />
               {item.label}
-            </span>
+            </Link>
           );
         })}
       </nav>

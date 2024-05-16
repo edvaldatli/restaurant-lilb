@@ -2,20 +2,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { DishType, CocktailType } from "../types/types";
 
-type OrderType = {
+export type OrderType = {
   dishes: { dish: DishType; quantity: number }[];
-  drinks: CocktailType[];
+  drinks: { drink: CocktailType; quantity: number }[];
 };
 
 const OrderContext = createContext<{
   currentOrder: OrderType | undefined;
   updateDrinks: (drinks: CocktailType) => void;
+  removeDrink: (drinks: CocktailType) => void;
   updateDishes: (dishes: DishType) => void;
   removeDish: (dishes: DishType) => void;
   getCurrentPrice: () => number;
 }>({
   currentOrder: undefined,
   updateDrinks: () => {},
+  removeDrink: () => {},
   updateDishes: () => {},
   removeDish: () => {},
   getCurrentPrice: () => 0,
@@ -46,10 +48,41 @@ export default function OrderProvider({
     }
   }, [currentOrder]);
 
-  const updateDrinks = (drinks: CocktailType) => {
+  const updateDrinks = (newDrink: CocktailType) => {
+    setCurrentOrder((rest) => {
+      const drinkExists = rest.drinks.find(
+        (d) => d.drink.idDrink === newDrink.idDrink
+      );
+      const newDrinks = drinkExists
+        ? rest.drinks.map((d) =>
+            d.drink.idDrink === newDrink.idDrink
+              ? { ...d, quantity: d.quantity + 1 }
+              : d
+          )
+        : [
+            ...rest.drinks,
+            { drink: newDrink, quantity: 1, price: newDrink.price },
+          ];
+      return {
+        ...rest,
+        drinks: newDrinks,
+      };
+    });
+  };
+
+  const removeDrink = (drinkToRemove: CocktailType) => {
     setCurrentOrder((rest) => ({
       ...rest,
-      drinks: [...rest.drinks, drinks],
+      drinks: rest.drinks.reduce((acc, d) => {
+        if (d.drink.idDrink === drinkToRemove.idDrink) {
+          if (d.quantity > 1) {
+            acc.push({ ...d, quantity: d.quantity - 1 });
+          }
+        } else {
+          acc.push(d);
+        }
+        return acc;
+      }, [] as { drink: CocktailType; quantity: number }[]),
     }));
   };
 
@@ -85,10 +118,15 @@ export default function OrderProvider({
   };
 
   const getCurrentPrice = () => {
-    return currentOrder.dishes.reduce(
-      (acc, { dish, quantity }) => acc + dish.price * quantity,
+    const dishesPrice = currentOrder.dishes.reduce(
+      (acc, dish) => acc + dish.dish.price * dish.quantity,
       0
     );
+    const drinksPrice = currentOrder.drinks.reduce(
+      (acc, drink) => acc + drink.drink.price * drink.quantity,
+      0
+    );
+    return dishesPrice + drinksPrice;
   };
 
   return (
@@ -96,6 +134,7 @@ export default function OrderProvider({
       value={{
         currentOrder,
         updateDrinks,
+        removeDrink,
         updateDishes,
         removeDish,
         getCurrentPrice,

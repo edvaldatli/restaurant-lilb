@@ -6,6 +6,7 @@ type ButtonParamTypes = {
   text?: string;
   className?: string;
   type: "back" | "forward";
+  disabled: boolean;
 };
 
 const routeFlow = [
@@ -19,6 +20,7 @@ export default function RoutingButton({
   text = "Next",
   className = "",
   type,
+  disabled,
 }: ButtonParamTypes) {
   const router = useRouter();
   const currentRoute = usePathname();
@@ -36,7 +38,7 @@ export default function RoutingButton({
   };
 
   return (
-    <button onClick={handleNextRoute} className={className}>
+    <button onClick={handleNextRoute} disabled={disabled} className={className}>
       {type === "back" && (
         <>
           <FaAngleLeft />

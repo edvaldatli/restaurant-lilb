@@ -2,29 +2,18 @@
 import { useState, useEffect, Suspense } from "react";
 import { FaPlus } from "react-icons/fa";
 import debounce from "lodash/debounce";
-import Image from "next/image";
-import CocktailPlaceholder from "./CocktailPlaceholder";
 import CocktailImage from "./CocktailImage";
 import { CocktailType } from "../../types/types";
+import { useOrder } from "@/app/context/OrderContext";
+import { update } from "lodash";
 
-type Props = {
-  handleClick: (cocktail: CocktailType) => void;
-};
-
-type RandomType = {
-  min: number;
-  max: number;
-  increment: number;
-};
-
-export default function DrinksCard({ handleClick }: Props) {
+export default function DrinksCard() {
   const [query, setQuery] = useState<string>("");
   const [results, setResults] = useState<CocktailType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { updateDrinks } = useOrder();
 
   const fetchCocktails = async () => {
     if (!query) return setResults([]);
-    setIsLoading(true);
     const response = await fetch(
       `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${query}`
     );
@@ -44,7 +33,7 @@ export default function DrinksCard({ handleClick }: Props) {
   }, [query]);
 
   return (
-    <div className="flex flex-col items-center p-6 gap-6 overflow-auto">
+    <div className="flex flex-col items-center p-6 gap-6 h-full">
       <input
         type="text"
         value={query}
@@ -67,7 +56,7 @@ export default function DrinksCard({ handleClick }: Props) {
                 <div className="flex flex-row justify-end">
                   <button
                     className="flex flex-row items-center gap-2 px-4 py-2 bg-green-700 text-white font-bold rounded-full"
-                    onClick={() => handleClick(cocktail)}
+                    onClick={() => updateDrinks({ ...cocktail, price: 1000 })}
                   >
                     Add
                     <FaPlus />

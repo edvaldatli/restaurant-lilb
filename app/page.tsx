@@ -37,23 +37,21 @@ export default function Home() {
         <motion.div
           id="card"
           key={"Welcome card"}
-          className="col-span-2 row-span-2 rounded-xl h-full"
+          className="col-span-2 row-span-2 rounded-xl"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
           <WelcomeCard />
         </motion.div>
-
         <motion.div
           id="card"
           key={"Logo card"}
-          className="lg:block col-span-2 lg:col-span-1 lg:row-span-2 bg-request-orange rounded-xl p-6 w-full"
+          className="lg:block col-span-2 lg:col-span-1 lg:row-span-2 bg-request-orange rounded-xl p-6"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
           <LogoCard />
         </motion.div>
-
         {/* Mikið issue að reyna fitta þetta Carousel og þess vegna er kóðinn skrýtinn */}
         <motion.div
           id="card"
@@ -64,7 +62,6 @@ export default function Home() {
         >
           <Carousel images={images} />
         </motion.div>
-
         <motion.div
           id="card"
           key={"Check order card"}
