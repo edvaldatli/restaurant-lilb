@@ -12,36 +12,41 @@ export default function CurrentOrderCard() {
     <div className="flex flex-col justify-between h-full p-4 select-none">
       <h2 className="text-lg font-bold">Your order:</h2>
       <ul className="flex flex-col p-2 gap-2">
-        {order.currentOrder &&
-          order.currentOrder.dishes.map(({ dish, quantity }) => (
-            <motion.li
-              initial={{ opacity: 0, translateY: 20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateX: 20 }}
-              className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
-              key={dish.id}
-            >
-              <div className="flex flex-row gap-1">
-                <p>{quantity}x</p>
-                <p className="font-bold">{dish.name}</p>
-                <p className="font-bold ml-auto">{dish.price * quantity} kr.</p>
-              </div>
-              <div className="flex flex-row justify-between items-start gap-2">
-                <p className="text-xs">{dish.ingredients}</p>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.8 }}
-                  className="text-red-600 select-all"
-                  onClick={() => order.removeDish(dish)}
-                >
-                  <FaTrash />
-                </motion.button>
-              </div>
-            </motion.li>
-          ))}
-        {order.currentOrder &&
-          order.currentOrder.drinks.map(({ drink, quantity }) => (
-            <AnimatePresence>
+        {order.currentOrder && (
+          <AnimatePresence>
+            {order.currentOrder.dishes.map(({ dish, quantity }) => (
+              <motion.li
+                initial={{ opacity: 0, translateY: 20 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                exit={{ opacity: 0, translateX: 20 }}
+                className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
+                key={dish.id}
+              >
+                <div className="flex flex-row gap-1">
+                  <p>{quantity}x</p>
+                  <p className="font-bold">{dish.name}</p>
+                  <p className="font-bold ml-auto">
+                    {dish.price * quantity} kr.
+                  </p>
+                </div>
+                <div className="flex flex-row justify-between items-start gap-2">
+                  <p className="text-xs">{dish.ingredients}</p>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.8 }}
+                    className="text-red-600 select-all"
+                    onClick={() => order.removeDish(dish)}
+                  >
+                    <FaTrash />
+                  </motion.button>
+                </div>
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        )}
+        {order.currentOrder && (
+          <AnimatePresence>
+            {order.currentOrder.drinks.map(({ drink, quantity }) => (
               <motion.li
                 initial={{ opacity: 0, translateY: 20 }}
                 animate={{ opacity: 1, translateY: 0 }}
@@ -68,8 +73,9 @@ export default function CurrentOrderCard() {
                   </motion.button>
                 </div>
               </motion.li>
-            </AnimatePresence>
-          ))}
+            ))}
+          </AnimatePresence>
+        )}
       </ul>
       <div className="flex flex-col">
         <h3 className="ml-auto text-lg font-bold">
