@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { LocalStorageProvider } from "./context/LocalStorage";
+import OrderProvider from "./context/OrderContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,12 +21,14 @@ export default function RootLayout({
         <SpeedInsights />
       </head>
       <body className="">
-        <LocalStorageProvider>
-          <StepStatusBar />
-          <div className="px-4 lg:px-2 2xl:px-96 pt-6 pb-8 lg:pt-32 h-screen">
-            {children}
-          </div>
-        </LocalStorageProvider>
+        <OrderProvider>
+          <LocalStorageProvider>
+            <StepStatusBar />
+            <div className="px-4 lg:px-2 2xl:px-96 pt-6 pb-8 lg:pt-32 h-screen">
+              {children}
+            </div>
+          </LocalStorageProvider>
+        </OrderProvider>
       </body>
     </html>
   );

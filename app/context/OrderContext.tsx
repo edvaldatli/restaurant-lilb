@@ -1,19 +1,24 @@
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { DishType, CocktailType } from "../types/types";
 
 type OrderType = {
-  dishes: string[];
-  drinks: string[];
-  date: string;
+  dishes: { dish: DishType; quantity: number }[];
+  drinks: CocktailType[];
 };
 
 const OrderContext = createContext<{
   currentOrder: OrderType | undefined;
-  updateDrinks: (drinks: string[]) => void;
-  updateDishes: (dishes: string[]) => void;
+  updateDrinks: (drinks: CocktailType) => void;
+  updateDishes: (dishes: DishType) => void;
+  removeDish: (dishes: DishType) => void;
+  getCurrentPrice: () => number;
 }>({
   currentOrder: undefined,
   updateDrinks: () => {},
   updateDishes: () => {},
+  removeDish: () => {},
+  getCurrentPrice: () => 0,
 });
 
 export const useOrder = () => useContext(OrderContext);
@@ -26,7 +31,6 @@ export default function OrderProvider({
   const [currentOrder, setCurrentOrder] = useState<OrderType>({
     dishes: [],
     drinks: [],
-    date: "",
   });
 
   useEffect(() => {
@@ -42,22 +46,61 @@ export default function OrderProvider({
     }
   }, [currentOrder]);
 
-  const updateDrinks = (drinks: string[]) => {
+  const updateDrinks = (drinks: CocktailType) => {
     setCurrentOrder((rest) => ({
       ...rest,
-      drinks,
+      drinks: [...rest.drinks, drinks],
     }));
   };
 
-  const updateDishes = (dishes: string[]) => {
+  const updateDishes = (newDish: DishType) => {
+    setCurrentOrder((rest) => {
+      const dishExists = rest.dishes.find((d) => d.dish.id === newDish.id);
+      const newDishes = dishExists
+        ? rest.dishes.map((d) =>
+            d.dish.id === newDish.id ? { ...d, quantity: d.quantity + 1 } : d
+          )
+        : [...rest.dishes, { dish: newDish, quantity: 1 }];
+      return {
+        ...rest,
+        dishes: newDishes,
+      };
+    });
+  };
+
+  const removeDish = (dishToRemove: DishType) => {
     setCurrentOrder((rest) => ({
       ...rest,
-      dishes,
+      dishes: rest.dishes.reduce((acc, d) => {
+        if (d.dish.id === dishToRemove.id) {
+          if (d.quantity > 1) {
+            acc.push({ ...d, quantity: d.quantity - 1 });
+          }
+        } else {
+          acc.push(d);
+        }
+        return acc;
+      }, [] as { dish: DishType; quantity: number }[]),
     }));
+  };
+
+  const getCurrentPrice = () => {
+    return currentOrder.dishes.reduce(
+      (acc, { dish, quantity }) => acc + dish.price * quantity,
+      0
+    );
   };
 
   return (
-    <OrderContext.Provider value={{ currentOrder, updateDrinks, updateDishes }}>
+    <OrderContext.Provider
+      value={{
+        currentOrder,
+        updateDrinks,
+        updateDishes,
+        removeDish,
+        getCurrentPrice,
+      }}
+    >
       {children}
     </OrderContext.Provider>
   );

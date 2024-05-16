@@ -10,6 +10,8 @@ import {
   useAnimationControls,
 } from "framer-motion";
 
+import { useOrder } from "@/app/context/OrderContext";
+
 const pb = new PocketBase(process.env.NEXT_PUBLIC_DB_HOST);
 enum foodCategories {
   Hamburger = "Hamburger",
@@ -18,6 +20,7 @@ enum foodCategories {
 }
 
 export default function DishesCard() {
+  const order = useOrder();
   const [dishes, setDishes] = useState<DishType[]>([]);
   const [displayDishes, setDisplayDishes] = useState<DishType[]>([]);
 
@@ -32,6 +35,10 @@ export default function DishesCard() {
       (dish) => dish.category === filter.toString()
     );
     setDisplayDishes(dishesToDisplay);
+  };
+
+  const addDish = (dish: DishType) => {
+    order.updateDishes(dish);
   };
 
   useEffect(() => {
@@ -93,10 +100,15 @@ export default function DishesCard() {
                   <p className="font-light text-sm">{dish.ingredients}</p>
                 </div>
                 <div className="flex flex-row justify-between items-end">
-                  <button className="flex flex-row items-center gap-2 bg-green-700 rounded-full px-2 py-1 text-white">
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex flex-row items-center gap-2 bg-green-700 rounded-full px-2 py-1 text-white font-bold"
+                    onClick={() => addDish(dish)}
+                  >
                     Add
                     <FaPlus />
-                  </button>
+                  </motion.a>
                   <p className="text-right font-bold text-lg">
                     {dish.price} kr.
                   </p>
