@@ -23,6 +23,7 @@ export default function DrinksPage() {
           className="col-span-2 row-span-10 bg-request-orange rounded-xl h-full overflow-auto"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
+          key={"DrinksCard"}
         >
           <DrinksCard />
         </motion.div>
