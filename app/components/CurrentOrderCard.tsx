@@ -7,6 +7,7 @@ import { use } from "react";
 
 export default function CurrentOrderCard() {
   const order = useOrder();
+  const currentPath = usePathname();
   return (
     <div className="flex flex-col justify-between h-full p-4 select-none">
       <h2 className="text-lg font-bold">Your order:</h2>
@@ -80,9 +81,9 @@ export default function CurrentOrderCard() {
           type="forward"
           disabled={
             (order.currentOrder?.dishes.length === 0 &&
-              usePathname() === "/dishes") ||
+              currentPath === "/dishes") ||
             (order.currentOrder?.drinks.length === 0 &&
-              usePathname() === "/drinks")
+              currentPath === "/drinks")
           }
         />
       </div>

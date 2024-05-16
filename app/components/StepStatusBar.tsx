@@ -36,6 +36,7 @@ export default function StepStatusBar() {
                 type="back"
                 className="flex flex-row items-center"
                 text="Back"
+                disabled={false}
               />
             </motion.div>
           </AnimatePresence>
