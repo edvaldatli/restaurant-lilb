@@ -35,6 +35,7 @@ export default function WelcomeCard() {
             text="Start ordering"
             type="forward"
             className="flex flex-row text-nowrap items-center h-10 p-4 rounded-xl font-bold text-white bg-green-600 hover:bg-request-green transition-colors"
+            disabled={false}
           />
         </div>
       </div>
