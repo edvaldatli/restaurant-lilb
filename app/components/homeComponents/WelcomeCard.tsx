@@ -1,6 +1,6 @@
-import { useLocalStorage } from "../context/LocalStorage";
+import { useLocalStorage } from "../../context/LocalStorage";
 import Link from "next/link";
-import RoutingButton from "./RoutingButton";
+import RoutingButton from "../RoutingButton";
 
 export default function WelcomeCard() {
   const { name } = useLocalStorage();

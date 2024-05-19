@@ -1,4 +1,4 @@
-import { useLocalStorage } from "../context/LocalStorage";
+import { useLocalStorage } from "../../context/LocalStorage";
 import Link from "next/link";
 
 export default function OldOrderCard() {

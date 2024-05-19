@@ -8,10 +8,10 @@ import {
 } from "framer-motion";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import WelcomeCard from "./components/WelcomeCard";
-import OldOrderCard from "./components/OldOrderCard";
-import Carousel from "./components/Carousel";
-import LogoCard from "./components/LogoCard";
+import WelcomeCard from "./components/homeComponents/WelcomeCard";
+import OldOrderCard from "./components/homeComponents/OldOrderCard";
+import Carousel from "./components/homeComponents/Carousel";
+import LogoCard from "./components/homeComponents/LogoCard";
 import { useEffect } from "react";
 
 const images: string[] = [

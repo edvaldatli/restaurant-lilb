@@ -88,7 +88,8 @@ export default function CurrentOrderCard() {
           disabled={
             (order.currentOrder?.dishes.length === 0 &&
               currentPath === "/dishes") ||
-            (order.currentOrder?.drinks.length === 0 &&
+            ((order.currentOrder?.drinks.length === 0 ||
+              order.currentOrder?.dishes.length === 0) &&
               currentPath === "/drinks")
           }
         />
