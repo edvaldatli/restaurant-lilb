@@ -6,6 +6,7 @@ import DrinksCard from "../components/drinksComponents/DrinksCard";
 import { useOrder } from "../context/OrderContext";
 import { CocktailType } from "../types/types";
 import CurrentOrderCard from "../components/CurrentOrderCard";
+import { Metadata } from "next";
 
 export default function DrinksPage() {
   const [scope, animate] = useAnimate();

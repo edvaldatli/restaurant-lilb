@@ -4,7 +4,6 @@ import { FaTrash } from "react-icons/fa";
 import DishesCard from "../components/dishesComponents/DishesCard";
 import { useEffect } from "react";
 import CurrentOrderCard from "../components/CurrentOrderCard";
-import { useOrder } from "../context/OrderContext";
 
 export default function DishesPage() {
   const [scope, animate] = useAnimate();

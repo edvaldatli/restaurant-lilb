@@ -2,13 +2,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { DishType, CocktailType } from "../types/types";
 
-export type OrderType = {
+export type OrderContextType = {
   dishes: { dish: DishType; quantity: number }[];
   drinks: { drink: CocktailType; quantity: number }[];
 };
 
 const OrderContext = createContext<{
-  currentOrder: OrderType | undefined;
+  currentOrder: OrderContextType | undefined;
   updateDrinks: (drinks: CocktailType) => void;
   removeDrink: (drinks: CocktailType) => void;
   updateDishes: (dishes: DishType) => void;
@@ -30,7 +30,7 @@ export default function OrderProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [currentOrder, setCurrentOrder] = useState<OrderType>({
+  const [currentOrder, setCurrentOrder] = useState<OrderContextType>({
     dishes: [],
     drinks: [],
   });

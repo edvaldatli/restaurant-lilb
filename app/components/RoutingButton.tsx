@@ -12,8 +12,8 @@ type ButtonParamTypes = {
 const routeFlow = [
   { currentRoute: "/", nextRoute: "/dishes", backRoute: "/" },
   { currentRoute: "/dishes", nextRoute: "/drinks", backRoute: "/" },
-  { currentRoute: "/drinks", nextRoute: "/order", backRoute: "/dishes" },
-  { currentRoute: "/order", nextRoute: "/", backRoute: "/drinks" },
+  { currentRoute: "/drinks", nextRoute: "/review", backRoute: "/dishes" },
+  { currentRoute: "/review", nextRoute: "/", backRoute: "/drinks" },
 ];
 
 export default function RoutingButton({

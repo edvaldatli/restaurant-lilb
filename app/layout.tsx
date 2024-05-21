@@ -6,8 +6,15 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { LocalStorageProvider } from "./context/LocalStorage";
 import OrderProvider from "./context/OrderContext";
+import { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Lil Bits",
+  description:
+    "Lil Bits is a restaurant that serves small portions of food and drinks.",
+};
 
 export default function RootLayout({
   children,
