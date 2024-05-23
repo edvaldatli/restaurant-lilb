@@ -1,6 +1,5 @@
 "use client";
 import { AnimatePresence, motion, stagger, useAnimate } from "framer-motion";
-import { FaTrash } from "react-icons/fa";
 import DishesCard from "../components/dishesComponents/DishesCard";
 import { useEffect } from "react";
 import CurrentOrderCard from "../components/CurrentOrderCard";
@@ -27,7 +26,7 @@ export default function DishesPage() {
         </motion.div>
         <motion.div
           id="card"
-          key={"Next step card"}
+          key={"Order Card"}
           className=" bg-request-orange rounded-xl"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}

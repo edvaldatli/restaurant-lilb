@@ -1,9 +1,12 @@
 import { useLocalStorage } from "../../context/LocalStorage";
 import { useRouter } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
+import { LocalStorageProvider } from "../../context/LocalStorage";
 
 export default function OldOrderCard() {
   const router = useRouter();
+  const localStorage = useLocalStorage();
+
   const handleSubmition = (data: FormData) => {
     const email = data.get("email");
     router.push(`/order/${email}`);
@@ -24,6 +27,7 @@ export default function OldOrderCard() {
           type="email"
           className="text-lg p-2 font-medium border rounded-xl text-black"
           name="email"
+          defaultValue={localStorage.email || ""}
           required
         />
         <div className="flex flex-row justify-end">

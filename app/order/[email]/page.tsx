@@ -3,15 +3,18 @@ import { useEffect, useState } from "react";
 import { OrderType, getAllOrdersByEmail } from "../../utils/serverFunctions";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { FaAngleLeft } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
-import { formatDate, formatBookingDate } from "../../utils/dateFormat";
+import {
+  formatDate,
+  formatBookingDate,
+  checkBookingHandled,
+} from "../../utils/dateFormat";
 
 import "rsuite/Loader/styles/index.css";
 import "rsuite/Placeholder/styles/index.css";
 import { Loader } from "rsuite";
-import { motion } from "framer-motion";
-import RoutingButton from "@/app/components/RoutingButton";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function OrderPage() {
   const { email: orderEmail } = useParams();
@@ -37,112 +40,187 @@ export default function OrderPage() {
         setLoading(false);
       }
     };
-
-    fetchOrder();
-  }, [orderEmail]);
+    setTimeout(() => {
+      fetchOrder();
+    }, 3000);
+  }, []);
 
   if (loading) {
     return (
       <motion.div
         className="h-full w-full bg-request-orange rounded-xl text-white p-20"
-        initial={{ opacity: 0, translateX: -80 }}
-        animate={{ opacity: 1, translateX: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       >
         <Loader size="md" content="loading..." backdrop inverse vertical />
       </motion.div>
     );
   } else if (orders === undefined || orders.length === 0) {
     return (
-      <motion.div
-        className="flex flex-col justify-center items-center h-full w-full bg-request-orange rounded-xl text-white p-20 gap-2"
-        initial={{ opacity: 0, translateX: -80 }}
-        animate={{ opacity: 1, translateX: 0 }}
-      >
-        <h1 className="text-3xl font-bold">
-          No orders found for email {decodeURIComponent(orderEmail.toString())}
-        </h1>
-        <Link
-          href={"/"}
-          className="flex flex-row justify-center items-center bg-zinc-800 text-xl py-2 px-5 font-bold rounded-xl gap-2"
+      <AnimatePresence>
+        <motion.div
+          className="flex flex-col justify-center items-center h-full w-full bg-request-orange rounded-xl text-white p-20 gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
         >
-          <FaAngleLeft />
-          Back to home
-        </Link>
-      </motion.div>
+          <h1 className="text-3xl font-bold">
+            No orders found for email{" "}
+            {decodeURIComponent(orderEmail.toString())}
+          </h1>
+          <Link
+            href={"/"}
+            className="flex flex-row justify-center items-center bg-zinc-800 text-xl py-2 px-5 font-bold rounded-xl gap-2"
+          >
+            <FaAngleLeft />
+            Back to home
+          </Link>
+        </motion.div>
+      </AnimatePresence>
     );
   } else
     return (
-      <motion.div
-        className="flex flex-col bg-request-orange w-full h-full rounded-xl text-white"
-        initial={{ opacity: 0, translateX: -80 }}
-        animate={{ opacity: 1, translateX: 0 }}
-      >
-        <div className="flex flex-row w-full justify-start h-full">
-          <ul className="flex flex-col w-1/4 h-full  bg-zinc-700  border-black">
-            {orders.map((order) => (
-              <li
-                className={`"flex flex-col bg-white text-black w-full p-4 border-b-2 hover:bg-zinc-200 transition-colors active:bg-green-50 ${
-                  selectedOrder?.id === order.id ? "bg-black" : ""
-                }"`}
-                key={order.id}
-                onClick={() => setSelcectedOrder(order)}
-              >
-                <div></div>
-                <h2>{formatDate(order.orderTimestamp)}</h2>
-                <h3>{formatBookingDate(order.time)}</h3>
-                <h3>Total: {order.total}</h3>
-              </li>
-            ))}
-          </ul>
-          <ul className="overflow-auto h-full">
-            {selectedOrder && (
-              <li className="p-4">
-                <h2>Pöntun: {formatDate(selectedOrder.orderTimestamp)}</h2>
-                <h3>Bókunar tími: {formatDate(selectedOrder.time)}</h3>
-                <h3>Total: {selectedOrder.total} kr.</h3>
-                <ul>
-                  {selectedOrder.dishes.map((item) => (
-                    <li
-                      key={item.dish.id}
-                      className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black h-28"
-                    >
-                      <div>
-                        <h3 className="font-bold text-lg">{`${item.quantity}x ${item.dish.name}`}</h3>
-                        <p className="text-sm italic">
-                          {item.dish.ingredients}
-                        </p>
-                        <p className="font-bold">
-                          {item.dish.price * item.quantity} kr.
-                        </p>
+      <AnimatePresence>
+        <motion.div
+          className="flex flex-col bg-request-orange w-full h-full rounded-xl text-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="flex flex-row w-full justify-start h-full">
+            <ul className="flex flex-col w-1/3 bg-zinc-700 border-black overflow-auto ">
+              {orders.map((order) => (
+                <li
+                  className={`flex flex-row justify-between items-center gap-4 w-full p-4 border-b-2 hover:bg-zinc-300  transition-colors ${
+                    selectedOrder?.id === order.id
+                      ? "bg-request-orange text-white hover:bg-request-orange"
+                      : "bg-white text-black"
+                  }`}
+                  key={order.id}
+                  onClick={() => setSelcectedOrder(order)}
+                >
+                  {checkBookingHandled(order.time) === false && (
+                    <span className="relative flex w-2 h-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-full w-full bg-sky-500"></span>
+                    </span>
+                  )}
+                  <div className="flex flex-col w-2/3">
+                    <p className="text-sm font-semibold">Table:</p>
+                    <p className="text-xs">{formatBookingDate(order.time)}</p>
+                  </div>
+                  <div className="flex flex-col justify-between">
+                    <h3 className="text-sm text-nowrap">
+                      {formatDate(order.orderTimestamp)}
+                    </h3>
+                    <h3 className="text-sm font-semibold text-nowrap">
+                      {order.total} kr
+                    </h3>
+                  </div>
+                  <FaAngleRight />
+                </li>
+              ))}
+            </ul>
+            <div className="overflow-auto h-full w-full">
+              <AnimatePresence>
+                {selectedOrder && (
+                  <motion.div
+                    className="flex flex-col p-4 h-full gap-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="flex flex-row justify-between bg-green-700 rounded-lg p-4">
+                      <div className="flex flex-col h-20 justify-center">
+                        {checkBookingHandled(selectedOrder.time) === false && (
+                          <div className="flex flex-row items-center gap-3">
+                            <span className="relative flex w-3 h-3">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-full w-full bg-sky-500"></span>
+                            </span>
+                            <h1 className="text-xl font-bold">
+                              Þú átt bókað borð á Lilbits!
+                            </h1>
+                          </div>
+                        )}
+                        {checkBookingHandled(selectedOrder.time) === true && (
+                          <h1 className="text-xl font-bold">
+                            Þú borðaðir á Lilbits!
+                          </h1>
+                        )}
+
+                        <h3>{formatBookingDate(selectedOrder.time)}</h3>
                       </div>
-                    </li>
-                  ))}
-                  {selectedOrder.drinks.map((item) => (
-                    <li
-                      key={item.drink.idDrink}
-                      className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black h-28"
-                    >
-                      <img
-                        src={item.drink.strDrinkThumb}
-                        alt="Image of drink"
-                        className="rounded-xl"
-                      />
-                      <div>
-                        <h3 className="font-bold text-lg">
-                          {item.drink.strDrink}
-                        </h3>
-                        <p className="text-sm italic">
-                          {item.drink.strCategory}
-                        </p>
-                        <p className="font-bold">{item.drink.price} kr.</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            )}
-          </ul>
-        </div>
-      </motion.div>
+                      <h2 className="font-light">
+                        {formatDate(selectedOrder.orderTimestamp)}
+                      </h2>
+                    </div>
+                    <h2 className="text-lg font-bold">Pöntunin þín:</h2>
+                    <ul className="flex flex-col gap-2 overflow-auto">
+                      {selectedOrder.dishes.map((item) => (
+                        <li
+                          key={item.dish.id}
+                          className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black h-20"
+                        >
+                          <img
+                            src="/dishImages/_80b0946c-ec77-41dc-804b-62c0b3e9251f-430182224_2117777741914944_2539049768948188489_n.png"
+                            alt=""
+                            className="rounded-xl object-contain"
+                            width="50"
+                            height="50"
+                          />
+                          <div className="flex flex-col w-full">
+                            <div className="flex flex-row justify-between">
+                              <h3 className="font-bold text-lg">
+                                {item.quantity}x {item.dish.name}
+                              </h3>
+                              <p className="font-bold text-xl">
+                                {item.dish.price * item.quantity} kr.
+                              </p>
+                            </div>
+                            <p className="text-sm italic">
+                              {item.dish.ingredients}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                      {selectedOrder.drinks.map((item) => (
+                        <li
+                          key={item.drink.idDrink}
+                          className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black h-20"
+                        >
+                          <img
+                            src={item.drink.strDrinkThumb}
+                            alt="Image of drink"
+                            className="rounded-xl object-cover"
+                            width="50"
+                            height="50"
+                          />
+                          <div className="flex flex-col w-full">
+                            <div className="flex flex-row justify-between w-full">
+                              <h3 className="font-bold text-lg">
+                                {item.quantity}x {item.drink.strDrink}
+                              </h3>
+                              <p className="font-bold text-xl">
+                                {item.drink.price * item.quantity} kr.
+                              </p>
+                            </div>
+                            <p className="text-sm italic">
+                              {item.drink.strCategory}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="flex flex-row mt-auto bg-zinc-600 w-full h-16 rounded-xl items-center p-4 justify-end">
+                      <h3 className="text-lg font-bold">
+                        Samtals: {selectedOrder.total} kr.
+                      </h3>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     );
 }

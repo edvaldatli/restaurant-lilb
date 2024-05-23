@@ -3,7 +3,6 @@ import { FaTrash } from "react-icons/fa";
 import RoutingButton from "./RoutingButton";
 import { useOrder } from "../context/OrderContext";
 import { usePathname } from "next/navigation";
-import { use } from "react";
 
 export default function CurrentOrderCard() {
   const order = useOrder();
@@ -16,7 +15,7 @@ export default function CurrentOrderCard() {
           <AnimatePresence>
             {order.currentOrder.dishes.map(({ dish, quantity }) => (
               <motion.li
-                initial={{ opacity: 0, translateY: 20 }}
+                initial={{ opacity: 0, translateY: 80 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 exit={{ opacity: 0, translateX: 20 }}
                 className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"

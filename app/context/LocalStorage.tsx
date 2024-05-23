@@ -12,12 +12,16 @@ type LocalStorageTypes = {
   email: string | null;
   name: string | null;
   lastOrder: object[] | null;
+  setNameLS: (name: string) => void;
+  setEmailLS: (email: string) => void;
 };
 
 const LocalStorageContext = createContext<LocalStorageTypes>({
   email: "",
   name: "",
   lastOrder: [],
+  setNameLS: () => {},
+  setEmailLS: () => {},
 });
 
 export const useLocalStorage = () => useContext(LocalStorageContext);
@@ -31,14 +35,27 @@ export const LocalStorageProvider: FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const storedName = localStorage.getItem("name") as string;
+    const storedEmail = localStorage.getItem("email") as string;
     if (storedName) {
       setName(storedName);
+      setEmail(storedEmail);
     }
-    console.log(storedName);
   }, []);
 
+  const setNameLS = (name: string) => {
+    setName(name);
+    localStorage.setItem("name", name);
+  };
+
+  const setEmailLS = (email: string) => {
+    setEmail(email);
+    localStorage.setItem("email", email);
+  };
+
   return (
-    <LocalStorageContext.Provider value={{ name, email, lastOrder }}>
+    <LocalStorageContext.Provider
+      value={{ name, email, lastOrder, setNameLS, setEmailLS }}
+    >
       {children}
     </LocalStorageContext.Provider>
   );

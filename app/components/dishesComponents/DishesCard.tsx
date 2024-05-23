@@ -91,6 +91,7 @@ export default function DishesCard() {
                 }
                 className="h-1/2 object-contain"
                 alt="Image of food"
+                loading="lazy"
                 width={500}
                 height={500}
               />

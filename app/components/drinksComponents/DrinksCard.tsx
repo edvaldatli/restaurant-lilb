@@ -41,7 +41,12 @@ export default function DrinksCard() {
         placeholder={"Find your cocktail..."}
         className="text-black w-1/2 p-4 rounded-xl text-lg shadow-xl"
       />
-      <div className="flex flex-col w-full gap-4">
+      <div className="flex flex-col w-full gap-4 pb-4">
+        {results.length === 0 && (
+          <p className="mx-auto my-auto h-full text-xl font-bold">
+            Search for your favorite cocktail!
+          </p>
+        )}
         {results &&
           results.map((cocktail) => (
             <div

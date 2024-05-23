@@ -29,11 +29,11 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
       </head>
-      <body className="">
+      <body>
         <OrderProvider>
           <LocalStorageProvider>
             <StepStatusBar />
-            <div className="px-4 lg:px-2 2xl:px-72 pt-6 pb-8 lg:pt-32 h-screen max-h-screen overflow-hidden">
+            <div className="px-4 lg:px-2 2xl:px-72 pt-6 pb-8 lg:pt-24 h-screen max-h-screen overflow-hidden">
               {children}
             </div>
           </LocalStorageProvider>

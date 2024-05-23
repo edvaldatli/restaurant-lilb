@@ -1,13 +1,13 @@
 import is_IS from "date-fns/locale/is";
 
 const Calendar = {
-  sunday: "Su",
-  monday: "Má",
-  tuesday: "Þr",
-  wednesday: "Mi",
-  thursday: "Fi",
-  friday: "Fö",
-  saturday: "La",
+  sunday: "Sun",
+  monday: "Mán",
+  tuesday: "Þri",
+  wednesday: "Mið",
+  thursday: "Fim",
+  friday: "Fös",
+  saturday: "Lau",
   ok: "OK",
   today: "Í dag",
   yesterday: "Í gær",

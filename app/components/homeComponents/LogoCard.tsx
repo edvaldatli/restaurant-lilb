@@ -7,6 +7,7 @@ export default function LogoCard() {
       height={500}
       width={500}
       alt="Logo"
+      priority={true}
       className="h-full w-full object-scale-down"
     ></Image>
   );
