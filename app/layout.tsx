@@ -33,11 +33,9 @@ export default function RootLayout({
         <OrderProvider>
           <LocalStorageProvider>
             <StepStatusBar />
-            <CustomProvider locale={is_IS}>
-              <div className="px-4 lg:px-2 2xl:px-72 pt-6 pb-8 lg:pt-32 h-screen max-h-screen overflow-hidden">
-                {children}
-              </div>
-            </CustomProvider>
+            <div className="px-4 lg:px-2 2xl:px-72 pt-6 pb-8 lg:pt-32 h-screen max-h-screen overflow-hidden">
+              {children}
+            </div>
           </LocalStorageProvider>
         </OrderProvider>
       </body>

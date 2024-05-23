@@ -1,18 +1,19 @@
 "use client";
 import { useState } from "react";
 import { FaClock } from "react-icons/fa";
-import { DatePicker } from "rsuite";
+import { CustomProvider, DatePicker } from "rsuite";
 import "rsuite/DatePicker/styles/index.css";
 import { useOrder } from "../context/OrderContext";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "../context/LocalStorage";
 import { uploadOrder } from "../utils/serverFunctions";
 import { motion } from "framer-motion";
-import is_IS from "rsuite/locales/is_IS";
+import is_IS from "../locales/is_IS";
+import { getNextQuarterHour } from "../utils/dateFormat";
 
 export default function ReviewPage() {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(getNextQuarterHour());
   const localStorage = useLocalStorage();
   const order = useOrder();
   const date: Date = new Date();
@@ -107,23 +108,25 @@ export default function ReviewPage() {
           <div>
             <h3 className="text-lg font-bold">Please select date:</h3>
             <div className="flex flex-row gap-4">
-              <DatePicker
-                name="date"
-                format="yyy-MM-dd HH:mm"
-                placeholder="Select date"
-                shouldDisableDate={shouldDisableDate}
-                type
-                hideHours={(hour) =>
-                  hour < 12 ||
-                  hour > 22 ||
-                  (selectedDate < new Date()
-                    ? hour < date.getHours() + 1
-                    : false)
-                }
-                hideMinutes={(minute) => minute % 15 !== 0}
-                onSelect={(date) => setSelectedDate(date)}
-                className="w-full"
-              />
+              <CustomProvider locale={is_IS}>
+                <DatePicker
+                  name="date"
+                  placeholder="Select date"
+                  shouldDisableDate={shouldDisableDate}
+                  format="dd/MM/yyyy HH:mm"
+                  defaultValue={selectedDate}
+                  hideHours={(hour) =>
+                    hour < 12 ||
+                    hour > 22 ||
+                    (selectedDate < new Date()
+                      ? hour < date.getHours() + 1
+                      : false)
+                  }
+                  hideMinutes={(minute) => minute % 15 !== 0}
+                  onSelect={(date) => setSelectedDate(date)}
+                  className="w-full"
+                />
+              </CustomProvider>
             </div>
           </div>
 
