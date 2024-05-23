@@ -6,8 +6,8 @@ export type OrderType = {
   id?: string;
   firstName: string;
   email: string;
-  orderTimestamp: string;
-  time: string;
+  orderTimestamp: Date;
+  time: Date;
   dishes: { dish: DishType; quantity: number }[];
   drinks: { drink: CocktailType; quantity: number }[];
   total: number;
@@ -17,8 +17,8 @@ const pb = new PocketBase(process.env.NEXT_PUBLIC_DB_HOST);
 
 export async function uploadOrder(
   order: OrderContextType,
-  orderTimestamp: string,
-  time: string,
+  orderTimestamp: Date,
+  time: Date,
   firstName: string,
   email: string,
   total: number
