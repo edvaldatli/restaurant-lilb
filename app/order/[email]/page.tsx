@@ -13,7 +13,7 @@ import { Loader } from "rsuite";
 import { motion } from "framer-motion";
 import RoutingButton from "@/app/components/RoutingButton";
 
-export default function OrderPage(props: { query: { email: string } }) {
+export default function OrderPage() {
   const { email: orderEmail } = useParams();
   const [orders, setOrders] = useState<OrderType[]>();
   const [selectedOrder, setSelcectedOrder] = useState<OrderType>();
