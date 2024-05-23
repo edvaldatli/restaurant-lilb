@@ -5,12 +5,14 @@ import { DatePicker } from "rsuite";
 import "rsuite/DatePicker/styles/index.css";
 import { useOrder } from "../context/OrderContext";
 import { uploadOrder } from "../utils/serverFunctions";
+import { motion } from "framer-motion";
 
 export default function ReviewPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const order = useOrder();
   const date: Date = new Date();
   const submitOrder = (formData: FormData) => {
+    // TODO - Implement form validation
     const name = formData.get("name");
     const email = formData.get("email");
     const date = selectedDate;
@@ -31,10 +33,10 @@ export default function ReviewPage() {
     } else {
       uploadOrder(
         order.currentOrder,
-        date.toString(),
-        new Date().toString(),
-        name,
-        email,
+        date,
+        new Date(),
+        name.toString(),
+        email.toString(),
         order.getCurrentPrice()
       );
     }
@@ -64,7 +66,11 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-full bg-request-orange rounded-xl p-4 gap-4 text-white">
+    <motion.div
+      className="flex flex-col lg:flex-row w-full h-full bg-request-orange rounded-xl p-4 gap-4 text-white"
+      initial={{ opacity: 0, translateX: -80 }}
+      animate={{ opacity: 1, translateX: 0 }}
+    >
       <div className="flex flex-col h-full w-full lg:w-1/3 gap-2">
         <h2 className="text-2xl font-bold text-center">Complete your order!</h2>
         <form
@@ -118,7 +124,7 @@ export default function ReviewPage() {
           </button>
         </form>
       </div>
-      <div className="flex flex-col h-full w-2/3 justify-between bg-zinc-600 shadow-xl rounded-xl p-4">
+      <div className="flex flex-col w-full h-full justify-between bg-zinc-600 shadow-xl rounded-xl p-4">
         {order.currentOrder && (
           <div className="flex flex-col gap-2">
             <h2 className="text-lg font-bold">Your order:</h2>
@@ -166,6 +172,6 @@ export default function ReviewPage() {
           </h3>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
