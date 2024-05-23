@@ -14,6 +14,7 @@ const OrderContext = createContext<{
   updateDishes: (dishes: DishType) => void;
   removeDish: (dishes: DishType) => void;
   getCurrentPrice: () => number;
+  removeCurrentOrder: () => void;
 }>({
   currentOrder: undefined,
   updateDrinks: () => {},
@@ -21,6 +22,7 @@ const OrderContext = createContext<{
   updateDishes: () => {},
   removeDish: () => {},
   getCurrentPrice: () => 0,
+  removeCurrentOrder: () => {},
 });
 
 export const useOrder = () => useContext(OrderContext);
@@ -129,6 +131,10 @@ export default function OrderProvider({
     return dishesPrice + drinksPrice;
   };
 
+  const removeCurrentOrder = () => {
+    setCurrentOrder({ dishes: [], drinks: [] });
+  };
+
   return (
     <OrderContext.Provider
       value={{
@@ -138,6 +144,7 @@ export default function OrderProvider({
         updateDishes,
         removeDish,
         getCurrentPrice,
+        removeCurrentOrder,
       }}
     >
       {children}

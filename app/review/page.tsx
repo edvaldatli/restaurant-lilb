@@ -4,11 +4,16 @@ import { FaClock } from "react-icons/fa";
 import { DatePicker } from "rsuite";
 import "rsuite/DatePicker/styles/index.css";
 import { useOrder } from "../context/OrderContext";
+import { useRouter } from "next/navigation";
+import { useLocalStorage } from "../context/LocalStorage";
 import { uploadOrder } from "../utils/serverFunctions";
 import { motion } from "framer-motion";
+import is_IS from "rsuite/locales/is_IS";
 
 export default function ReviewPage() {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const localStorage = useLocalStorage();
   const order = useOrder();
   const date: Date = new Date();
   const submitOrder = (formData: FormData) => {
@@ -16,7 +21,6 @@ export default function ReviewPage() {
     const name = formData.get("name");
     const email = formData.get("email");
     const date = selectedDate;
-    console.log(name, email, date);
 
     if (!name || !email || !date) {
       alert("Please fill out all fields!");
@@ -39,6 +43,10 @@ export default function ReviewPage() {
         email.toString(),
         order.getCurrentPrice()
       );
+      localStorage.name = name.toString();
+      localStorage.email = email.toString();
+      order.removeCurrentOrder();
+      router.push(`/order/${email}`);
     }
 
     alert("Order placed!");
@@ -75,14 +83,15 @@ export default function ReviewPage() {
         <h2 className="text-2xl font-bold text-center">Complete your order!</h2>
         <form
           action={submitOrder}
-          className="flex flex-col justify-around h-full"
+          className="flex flex-col justify-start h-full gap-8"
         >
           <div>
             <h3 className="text-lg font-bold">Your name:</h3>
             <input
               type="text"
               name="name"
-              className="w-full rounded-md p-1 text-zinc-700"
+              placeholder="Your name"
+              className="w-full rounded-md py-2 px-3 text-sm text-zinc-700 hover:border-blue-500 transition-colors border focus:border-blue-500"
             />
           </div>
           <div>
@@ -90,7 +99,8 @@ export default function ReviewPage() {
             <input
               type="text"
               name="email"
-              className="w-full rounded-md p-1 text-zinc-400"
+              placeholder="Your E-mail"
+              className="w-full rounded-md py-2 px-3 text-sm text-zinc-400 hover:border-blue-500 transition-colors border focus:border-blue-500"
             />
           </div>
 
@@ -102,6 +112,7 @@ export default function ReviewPage() {
                 format="yyy-MM-dd HH:mm"
                 placeholder="Select date"
                 shouldDisableDate={shouldDisableDate}
+                type
                 hideHours={(hour) =>
                   hour < 12 ||
                   hour > 22 ||
@@ -118,7 +129,7 @@ export default function ReviewPage() {
 
           <button
             type="submit"
-            className="bg-green-700 text-white text-xl font-bold rounded-md p-2 w-full"
+            className="bg-green-700 text-white text-xl font-bold rounded-md p-2 w-full mt-auto h-24 hover:bg-green-500 transition-colors"
           >
             Place order
           </button>
