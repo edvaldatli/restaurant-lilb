@@ -42,7 +42,7 @@ export async function uploadOrder(
     if (!checkData) {
       throw new Error("Order does not exist");
     }
-    await pb.collection("order").update(id, data);
+    await pb.collection("order").update(id || "", data);
     console.log("Order updated");
     return;
   } else {
