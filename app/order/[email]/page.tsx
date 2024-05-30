@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { OrderType, getAllOrdersByEmail } from "../../utils/serverFunctions";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight, FaEdit } from "react-icons/fa";
+import { useOrder } from "@/app/context/OrderContext";
 
 import {
   formatDate,
@@ -15,12 +16,30 @@ import "rsuite/Loader/styles/index.css";
 import "rsuite/Placeholder/styles/index.css";
 import { Loader } from "rsuite";
 import { AnimatePresence, motion } from "framer-motion";
+import { forEach } from "lodash";
 
 export default function OrderPage() {
+  const order = useOrder();
+  const router = useRouter();
   const { email: orderEmail } = useParams();
   const [orders, setOrders] = useState<OrderType[]>();
   const [selectedOrder, setSelcectedOrder] = useState<OrderType>();
   const [loading, setLoading] = useState(true);
+
+  const editOrder = (orderToEdit: OrderType) => {
+    order.currentOrder = orderToEdit;
+    console.log(orderToEdit);
+    forEach(orderToEdit.dishes, (dish) => {
+      order.updateDishes(dish.dish);
+    });
+    forEach(orderToEdit.drinks, (drink) => {
+      order.updateDrinks(drink.drink);
+    });
+
+    if (orderToEdit.id) order.setIdOfOrder(orderToEdit.id);
+
+    router.push("/dishes");
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -210,7 +229,14 @@ export default function OrderPage() {
                         </li>
                       ))}
                     </ul>
-                    <div className="flex flex-row mt-auto bg-zinc-600 w-full h-16 rounded-xl items-center p-4 justify-end">
+                    <div className="flex flex-row mt-auto bg-zinc-600 w-full h-16 rounded-xl items-center p-2 justify-between">
+                      <button
+                        onClick={() => editOrder(selectedOrder)}
+                        className="flex flex-row items-center gap-2 bg-green-600 h-full rounded-xl px-6 py-3 font-bold transition-colors hover:bg-green-400"
+                      >
+                        Breyta pöntun
+                        <FaEdit />
+                      </button>
                       <h3 className="text-lg font-bold">
                         Samtals: {selectedOrder.total} kr.
                       </h3>

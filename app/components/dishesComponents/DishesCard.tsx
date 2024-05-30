@@ -11,6 +11,7 @@ import {
 } from "framer-motion";
 
 import { useOrder } from "@/app/context/OrderContext";
+import { useMediaQuery } from "@/app/utils/mobileFunctions";
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_DB_HOST);
 enum foodCategories {

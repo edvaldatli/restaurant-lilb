@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaInfo } from "react-icons/fa";
 import RoutingButton from "./RoutingButton";
 import { useOrder } from "../context/OrderContext";
 import { usePathname } from "next/navigation";
@@ -7,13 +7,23 @@ import { usePathname } from "next/navigation";
 export default function CurrentOrderCard() {
   const order = useOrder();
   const currentPath = usePathname();
+  const currentOrder = order.currentOrder || { drinks: [], dishes: [] };
   return (
-    <div className="flex flex-col justify-between h-full p-4 select-none">
+    <div className="flex flex-col h-full p-4 select-none">
+      {currentOrder.id && (
+        <h2 className="flex flex-row items-center gap-4 bg-blue-500 rounded-xl p-4 font-bold my-2">
+          <FaInfo className="text-white text-lg" />
+          <span>You are currently editing an existing order</span>
+        </h2>
+      )}
       <h2 className="text-lg font-bold">Your order:</h2>
-      <ul className="flex flex-col p-2 gap-2">
-        {order.currentOrder && (
+      <ul className="flex flex-col justify-start p-2 gap-2 overflow-y-visible overflow-x-hidden h-full">
+        {currentOrder.dishes.length === 0 &&
+        currentOrder.drinks.length === 0 ? (
+          <p className="text-center font-bold text-2xl">Cart empty</p>
+        ) : (
           <AnimatePresence>
-            {order.currentOrder.dishes.map(({ dish, quantity }) => (
+            {currentOrder.dishes.map(({ dish, quantity }) => (
               <motion.li
                 initial={{ opacity: 0, translateY: 80 }}
                 animate={{ opacity: 1, translateY: 0 }}
@@ -43,9 +53,9 @@ export default function CurrentOrderCard() {
             ))}
           </AnimatePresence>
         )}
-        {order.currentOrder && (
+        {currentOrder && (
           <AnimatePresence>
-            {order.currentOrder.drinks.map(({ drink, quantity }) => (
+            {currentOrder.drinks.map(({ drink, quantity }) => (
               <motion.li
                 initial={{ opacity: 0, translateY: 20 }}
                 animate={{ opacity: 1, translateY: 0 }}
@@ -76,7 +86,7 @@ export default function CurrentOrderCard() {
           </AnimatePresence>
         )}
       </ul>
-      <div className="flex flex-col">
+      <div className="flex flex-col mt-auto">
         <h3 className="ml-auto text-lg font-bold">
           Total: {order.getCurrentPrice()} kr.
         </h3>
@@ -85,10 +95,9 @@ export default function CurrentOrderCard() {
           className="flex flex-row justify-center items-center bg-green-700 p-2 rounded-xl text-xl font-semibold hover:bg-green-500 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
           type="forward"
           disabled={
-            (order.currentOrder?.dishes.length === 0 &&
-              currentPath === "/dishes") ||
-            ((order.currentOrder?.drinks.length === 0 ||
-              order.currentOrder?.dishes.length === 0) &&
+            (currentOrder?.dishes.length === 0 && currentPath === "/dishes") ||
+            ((currentOrder?.drinks.length === 0 ||
+              currentOrder?.dishes.length === 0) &&
               currentPath === "/drinks")
           }
         />

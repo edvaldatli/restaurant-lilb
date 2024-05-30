@@ -20,7 +20,7 @@ export default function CocktailImage({ url }: CocktailImageTypes) {
       width={3000}
       height={3000}
       onLoad={() => setIsLoading(false)}
-      className={`rounded-xl w-1/6 ${
+      className={`rounded-xl object-fit w-auto h-full ${
         isLoading ? "animate-pulse bg-gray-500 blur-md p-12" : ""
       }`}
     />

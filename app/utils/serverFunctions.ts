@@ -21,7 +21,8 @@ export async function uploadOrder(
   time: Date,
   firstName: string,
   email: string,
-  total: number
+  total: number,
+  id?: string
 ) {
   const data: OrderType = {
     firstName: firstName,
@@ -31,8 +32,23 @@ export async function uploadOrder(
     dishes: order.dishes,
     drinks: order.drinks,
     total: total,
+    id: id || undefined,
   };
-  const record = await pb.collection("order").create(data);
+  console.log(id);
+  console.log(data.id);
+  if (data.id) {
+    const checkData = await pb.collection("order").getOne(data.id);
+    console.log(checkData);
+    if (!checkData) {
+      throw new Error("Order does not exist");
+    }
+    await pb.collection("order").update(id, data);
+    console.log("Order updated");
+    return;
+  } else {
+    await pb.collection("order").create(data);
+    console.log("Order created");
+  }
 }
 
 export async function getOrderById(id: string) {

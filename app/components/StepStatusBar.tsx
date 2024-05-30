@@ -5,6 +5,7 @@ import Number from "./Number";
 import { AnimatePresence, motion } from "framer-motion";
 import RoutingButton from "./RoutingButton";
 import Link from "next/link";
+import { useMediaQuery } from "../utils/mobileFunctions";
 
 export default function StepStatusBar() {
   const navItems = [
@@ -14,6 +15,7 @@ export default function StepStatusBar() {
     { path: "/review", label: "Order", number: 4 },
   ];
 
+  const isDesktop = useMediaQuery(768);
   const router = useRouter();
   const path = usePathname();
   const activePath = navItems.find((item) => item.path === path);
@@ -50,17 +52,16 @@ export default function StepStatusBar() {
                 path === item.path ? "bg-zinc-800" : ""
               }`}
             >
-              <Number number={item.number} />
               {item.label}
             </Link>
           );
         })}
       </nav>
-      <nav className="lg:hidden flex flex-row justify-center items-center w-full bg-request-orange text-2xl text-white font-bold h-24">
+      <nav className="lg:hidden flex flex-row justify-center items-center w-full bg-request-orange text-2xl text-white font-bold h-12">
         {path !== "/" && (
           <AnimatePresence>
             <motion.div
-              className="fixed left-4"
+              className="absolute left-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -78,10 +79,16 @@ export default function StepStatusBar() {
           </AnimatePresence>
         )}
         {activePath && (
-          <div className="flex items-center justify-center bg-zinc-800 h-full px-20 gap-2 ">
-            <Number number={activePath.number} />
+          <div className="flex items-center justify-center h-full px-20 gap-2 ">
             {activePath.label}
           </div>
+        )}
+        {path !== "/" && !isDesktop && (
+          <RoutingButton
+            type="forward"
+            disabled={false}
+            className="absolute right-1 flex flex-row items-center gap-2 text-lg"
+          />
         )}
       </nav>
     </>

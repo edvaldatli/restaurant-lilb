@@ -11,14 +11,14 @@ export default function DishesPage() {
   });
   return (
     <div
-      className="grid lg:grid-cols-3 gap-8 text-white drop-shadow-lg h-full"
+      className="flex flex-row gap-8 h-full text-white drop-shadow-lg"
       ref={scope}
     >
       <AnimatePresence>
         <motion.div
           id="card"
           key={"Dishes card"}
-          className="col-span-2 row-span-10 bg-request-orange rounded-xl h-full overflow-auto"
+          className="w-ful md:w-2/3 bg-request-orange rounded-xl overflow-auto h-full"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
@@ -27,7 +27,7 @@ export default function DishesPage() {
         <motion.div
           id="card"
           key={"Order Card"}
-          className=" bg-request-orange rounded-xl"
+          className="w-1/3 h-2/3 md:h-full hidden md:block bg-request-orange rounded-xl"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >

@@ -34,6 +34,7 @@ export default function ReviewPage() {
       order.currentOrder === undefined
     ) {
       alert("Please select some dishes or drinks before placing an order!");
+      router.push("/dishes");
       return;
     } else {
       await uploadOrder(
@@ -42,7 +43,8 @@ export default function ReviewPage() {
         date,
         name.toString(),
         email.toString(),
-        order.getCurrentPrice()
+        order.getCurrentPrice(),
+        order.currentOrder.id
       );
       localStorage.setNameLS(name.toString());
       localStorage.setEmailLS(email.toString());

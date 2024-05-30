@@ -16,12 +16,12 @@ export default function DrinksPage() {
 
   return (
     <div
-      className="grid lg:grid-cols-3 gap-8 h-full text-white drop-shadow-lg"
+      className="flex flex-row w-full gap-8 h-full text-white drop-shadow-lg"
       ref={scope}
     >
       <AnimatePresence>
         <motion.div
-          className="col-span-2 row-span-10 bg-request-orange rounded-xl h-full overflow-auto"
+          className="w-full md:w-2/3 bg-request-orange rounded-xl overflow-auto h-full"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
           key={"DrinksCard"}
@@ -29,7 +29,7 @@ export default function DrinksPage() {
           <DrinksCard />
         </motion.div>
         <motion.div
-          className="bg-request-orange rounded-xl"
+          className="bg-request-orange rounded-xl w-1/3 h-2/3 md:h-full hidden md:block"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >

@@ -5,6 +5,7 @@ import { DishType, CocktailType } from "../types/types";
 export type OrderContextType = {
   dishes: { dish: DishType; quantity: number }[];
   drinks: { drink: CocktailType; quantity: number }[];
+  id?: string;
 };
 
 const OrderContext = createContext<{
@@ -15,14 +16,16 @@ const OrderContext = createContext<{
   removeDish: (dishes: DishType) => void;
   getCurrentPrice: () => number;
   removeCurrentOrder: () => void;
+  setIdOfOrder: (id: string) => void;
 }>({
-  currentOrder: undefined,
+  currentOrder: { dishes: [], drinks: [], id: undefined },
   updateDrinks: () => {},
   removeDrink: () => {},
   updateDishes: () => {},
   removeDish: () => {},
   getCurrentPrice: () => 0,
   removeCurrentOrder: () => {},
+  setIdOfOrder: () => {},
 });
 
 export const useOrder = () => useContext(OrderContext);
@@ -35,6 +38,7 @@ export default function OrderProvider({
   const [currentOrder, setCurrentOrder] = useState<OrderContextType>({
     dishes: [],
     drinks: [],
+    id: undefined,
   });
 
   useEffect(() => {
@@ -49,6 +53,13 @@ export default function OrderProvider({
       localStorage.setItem("order", JSON.stringify(currentOrder));
     }
   }, [currentOrder]);
+
+  const setIdOfOrder = (id: string) => {
+    setCurrentOrder((rest) => ({
+      ...rest,
+      id: id,
+    }));
+  };
 
   const updateDrinks = (newDrink: CocktailType) => {
     setCurrentOrder((rest) => {
@@ -132,7 +143,7 @@ export default function OrderProvider({
   };
 
   const removeCurrentOrder = () => {
-    setCurrentOrder({ dishes: [], drinks: [] });
+    setCurrentOrder({ dishes: [], drinks: [], id: undefined });
   };
 
   return (
@@ -145,6 +156,7 @@ export default function OrderProvider({
         removeDish,
         getCurrentPrice,
         removeCurrentOrder,
+        setIdOfOrder,
       }}
     >
       {children}
