@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 
 export const useMediaQuery = (width: number) => {
   const [isMatch, setIsMatch] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(`(min-width: ${width}px)`);
-    const handleMediaChange = (e) => setIsMatch(e.matches);
+    const handleMediaChange = (e: MediaQueryListEvent) => setIsMatch(e.matches);
 
     setIsMatch(mediaQuery.matches);
 
