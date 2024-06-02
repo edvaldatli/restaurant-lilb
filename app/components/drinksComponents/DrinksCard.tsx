@@ -2,14 +2,15 @@
 import { useState, useEffect, Suspense } from "react";
 import { FaPlus } from "react-icons/fa";
 import debounce from "lodash/debounce";
-import CocktailImage from "./CocktailImage";
 import { CocktailType } from "../../types/types";
 import { useOrder } from "@/app/context/OrderContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useMediaQuery } from "../../utils/mobileFunctions";
+import ItemImage from "../ItemImage";
+import { AnimatePresence, Reorder, motion } from "framer-motion";
 
 export default function DrinksCard() {
-  const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState<string>("a");
   const [results, setResults] = useState<CocktailType[]>([]);
   const { updateDrinks } = useOrder();
 
@@ -21,8 +22,15 @@ export default function DrinksCard() {
       const response = await fetch(
         `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${query}`
       );
-      const data = await response.json();
-      setResults(data.drinks || []);
+      const data: { drinks: CocktailType[] } = await response.json();
+
+      if (!data.drinks) return setResults([]);
+
+      data.drinks.forEach((drink) => {
+        drink.price = 1000;
+      });
+
+      setResults(data.drinks.splice(0, 10) || []);
     } catch (error) {
       console.error("Error fetching cocktails:", error);
       setResults([]);
@@ -38,12 +46,16 @@ export default function DrinksCard() {
     const debouncedFetch = debounce(fetchCocktails, 300);
     if (query) debouncedFetch();
 
-    console.log("Query:", query);
-    console.log(results);
     return () => {
       debouncedFetch.cancel();
     };
   }, [query]);
+
+  // Skíta lausn, en þetta virkar
+  useEffect(() => {
+    fetchCocktails();
+    setQuery("");
+  }, []);
 
   return (
     <div className="flex flex-col items-center p-6 gap-6 h-full">
@@ -53,7 +65,7 @@ export default function DrinksCard() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={"Find your cocktail..."}
-        className="text-black w-1/2 p-4 rounded-xl text-lg shadow-xl"
+        className="text-black w-full md:w-1/2 p-4 rounded-xl text-lg shadow-xl"
       />
       <div className="flex flex-col w-full gap-4 pb-4">
         {results === null ? (
@@ -66,27 +78,46 @@ export default function DrinksCard() {
         ) : (
           <>
             {results.map((cocktail: CocktailType) => (
-              <div
-                className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black shadow-xl h-20 md:h-32"
+              <Reorder.Group
                 key={cocktail.idDrink}
+                values={results}
+                onReorder={setResults}
+                className="flex flex-col gap-4"
               >
-                <CocktailImage url={cocktail.strDrinkThumb} />
-                <div className="flex flex-row justify-between w-full">
-                  <div className="flex flex-col">
-                    <h2 className="font-bold text-xl">{cocktail.strDrink}</h2>
-                    <p className="font-light text-sm">{cocktail.strCategory}</p>
-                  </div>
-                  <div className="flex flex-col justify-end">
-                    <button
-                      className="flex flex-row items-center gap-2 px-4 py-2 bg-green-700 text-white font-bold rounded-full h-8 transition-colors hover:bg-green-500"
-                      onClick={() => addDrinks(cocktail)}
-                    >
-                      Add
-                      <FaPlus />
-                    </button>
-                  </div>
-                </div>
-              </div>
+                <AnimatePresence>
+                  <motion.div
+                    initial={{ opacity: 0, translateY: 20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    exit={{ opacity: 0, translateX: 20 }}
+                    className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black shadow-xl h-20 md:h-32"
+                    key={cocktail.idDrink}
+                  >
+                    <ItemImage url={cocktail.strDrinkThumb} />
+                    <div className="flex flex-row justify-between w-full">
+                      <div className="flex flex-col">
+                        <h2 className="font-bold text-xl line-clamp-1">
+                          {cocktail.strDrink}
+                        </h2>
+                        <p className="font-light text-sm">
+                          {cocktail.strCategory}
+                        </p>
+                      </div>
+                      <div className="flex flex-col justify-between">
+                        <p className="font-bold text-xl text-right">
+                          {cocktail.price} kr.
+                        </p>
+                        <button
+                          className="flex flex-row items-center gap-2 px-4 py-2 bg-green-700 text-white font-bold rounded-full h-8 transition-colors hover:bg-green-500"
+                          onClick={() => addDrinks(cocktail)}
+                        >
+                          Add
+                          <FaPlus />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </Reorder.Group>
             ))}
           </>
         )}

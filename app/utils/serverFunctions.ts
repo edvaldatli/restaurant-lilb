@@ -1,6 +1,6 @@
 import { OrderContextType } from "../context/OrderContext";
 import PocketBase from "pocketbase";
-import { CocktailType, DishType } from "../types/types";
+import { CocktailType, MealType } from "../types/types";
 
 export type OrderType = {
   id?: string;
@@ -8,7 +8,7 @@ export type OrderType = {
   email: string;
   orderTimestamp: Date;
   time: Date;
-  dishes: { dish: DishType; quantity: number }[];
+  meals: { meal: MealType; quantity: number }[];
   drinks: { drink: CocktailType; quantity: number }[];
   total: number;
 };
@@ -29,7 +29,7 @@ export async function uploadOrder(
     email: email,
     orderTimestamp: orderTimestamp,
     time: time,
-    dishes: order.dishes,
+    meals: order.meals,
     drinks: order.drinks,
     total: total,
     id: id || undefined,
@@ -66,16 +66,17 @@ export async function getLatestOrderByEmail(email: string) {
 export async function getAllOrdersByEmail(email: string): Promise<OrderType[]> {
   const result = await pb
     .collection("order")
-    .getList(1, 100, { filter: `email="${email}"`, sort: "-created" });
+    .getList(1, 100, { filter: `email="${email}"`, sort: "-time" });
   const records: OrderType[] = result.items.map((item: any) => ({
     id: item.id,
     firstName: item.firstName,
     email: item.email,
     orderTimestamp: item.orderTimestamp,
     time: item.time,
-    dishes: item.dishes,
+    meals: item.meals,
     drinks: item.drinks,
     total: item.total,
   }));
+  console.log(records);
   return records;
 }

@@ -1,9 +1,9 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { DishType, CocktailType } from "../types/types";
+import { CocktailType, MealType } from "../types/types";
 
 export type OrderContextType = {
-  dishes: { dish: DishType; quantity: number }[];
+  meals: { meal: MealType; quantity: number }[];
   drinks: { drink: CocktailType; quantity: number }[];
   id?: string;
 };
@@ -12,19 +12,19 @@ const OrderContext = createContext<{
   currentOrder: OrderContextType | undefined;
   updateDrinks: (drinks: CocktailType) => void;
   removeDrink: (drinks: CocktailType) => void;
-  updateDishes: (dishes: DishType) => void;
-  removeDish: (dishes: DishType) => void;
+  updateDishes: (meals: MealType) => void;
+  removeDish: (meals: MealType) => void;
   getCurrentPrice: () => number;
-  removeCurrentOrder: () => void;
+  cancelOrder: () => void;
   setIdOfOrder: (id: string) => void;
 }>({
-  currentOrder: { dishes: [], drinks: [], id: undefined },
+  currentOrder: { meals: [], drinks: [], id: undefined },
   updateDrinks: () => {},
   removeDrink: () => {},
   updateDishes: () => {},
   removeDish: () => {},
   getCurrentPrice: () => 0,
-  removeCurrentOrder: () => {},
+  cancelOrder: () => {},
   setIdOfOrder: () => {},
 });
 
@@ -36,7 +36,7 @@ export default function OrderProvider({
   children: React.ReactNode;
 }) {
   const [currentOrder, setCurrentOrder] = useState<OrderContextType>({
-    dishes: [],
+    meals: [],
     drinks: [],
     id: undefined,
   });
@@ -99,26 +99,30 @@ export default function OrderProvider({
     }));
   };
 
-  const updateDishes = (newDish: DishType) => {
-    setCurrentOrder((rest) => {
-      const dishExists = rest.dishes.find((d) => d.dish.id === newDish.id);
+  const updateDishes = (newDish: MealType) => {
+    setCurrentOrder((prevState) => {
+      const dishExists = prevState.meals.find(
+        (d) => d.meal.idMeal === newDish.idMeal
+      );
       const newDishes = dishExists
-        ? rest.dishes.map((d) =>
-            d.dish.id === newDish.id ? { ...d, quantity: d.quantity + 1 } : d
+        ? prevState.meals.map((d) =>
+            d.meal.idMeal === newDish.idMeal
+              ? { ...d, quantity: d.quantity + 1 }
+              : d
           )
-        : [...rest.dishes, { dish: newDish, quantity: 1 }];
+        : [...prevState.meals, { meal: newDish, quantity: 1 }]; // Changed key to 'meal'
       return {
-        ...rest,
-        dishes: newDishes,
+        ...prevState,
+        meals: newDishes,
       };
     });
   };
 
-  const removeDish = (dishToRemove: DishType) => {
-    setCurrentOrder((rest) => ({
-      ...rest,
-      dishes: rest.dishes.reduce((acc, d) => {
-        if (d.dish.id === dishToRemove.id) {
+  const removeDish = (dishToRemove: MealType) => {
+    setCurrentOrder((prevState) => ({
+      ...prevState,
+      meals: prevState.meals.reduce((acc, d) => {
+        if (d.meal.idMeal === dishToRemove.idMeal) {
           if (d.quantity > 1) {
             acc.push({ ...d, quantity: d.quantity - 1 });
           }
@@ -126,13 +130,13 @@ export default function OrderProvider({
           acc.push(d);
         }
         return acc;
-      }, [] as { dish: DishType; quantity: number }[]),
+      }, [] as { meal: MealType; quantity: number }[]),
     }));
   };
 
   const getCurrentPrice = () => {
-    const dishesPrice = currentOrder.dishes.reduce(
-      (acc, dish) => acc + dish.dish.price * dish.quantity,
+    const dishesPrice = currentOrder.meals.reduce(
+      (acc, meals) => acc + meals.meal.price * meals.quantity,
       0
     );
     const drinksPrice = currentOrder.drinks.reduce(
@@ -142,8 +146,8 @@ export default function OrderProvider({
     return dishesPrice + drinksPrice;
   };
 
-  const removeCurrentOrder = () => {
-    setCurrentOrder({ dishes: [], drinks: [], id: undefined });
+  const cancelOrder = () => {
+    setCurrentOrder({ meals: [], drinks: [], id: undefined });
   };
 
   return (
@@ -155,7 +159,7 @@ export default function OrderProvider({
         updateDishes,
         removeDish,
         getCurrentPrice,
-        removeCurrentOrder,
+        cancelOrder,
         setIdOfOrder,
       }}
     >

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomProvider, DatePicker, Loader } from "rsuite";
 import "rsuite/DatePicker/styles/index.css";
 import { useOrder } from "../context/OrderContext";
@@ -9,27 +9,97 @@ import { uploadOrder } from "../utils/serverFunctions";
 import { motion } from "framer-motion";
 import is_IS from "../locales/is_IS";
 import { getNextQuarterHour } from "../utils/dateFormat";
+import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
+import OrderCard from "../components/orderCard";
+import { error } from "console";
 
 export default function ReviewPage() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(getNextQuarterHour());
   const [loading, setLoading] = useState<boolean>(false);
+  const [emailValid, setEmailValid] = useState<boolean>();
+  const [nameValid, setNameValid] = useState<boolean>();
+  const [orderValid, setOrderValid] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
   const localStorage = useLocalStorage();
   const order = useOrder();
   const date: Date = new Date();
+
+  const isFormValid =
+    emailValid !== undefined &&
+    nameValid !== undefined &&
+    orderValid !== undefined &&
+    emailValid &&
+    nameValid &&
+    orderValid;
+
+  const emailValidation = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const result = emailRegex.test(email);
+    if (!result) {
+      setErrorText("Invalid email");
+    }
+    return result;
+  };
+
+  const nameValidation = (name: string) => {
+    const result = name.length > 0;
+    if (!result) {
+      setErrorText("Invalid name");
+    }
+    return result;
+  };
+
+  const orderValidation = () => {
+    const currentOrder = order.currentOrder;
+    const result =
+      (currentOrder &&
+        currentOrder.meals.length > 0 &&
+        currentOrder.drinks.length > 0) ||
+      false;
+    if (!result) {
+      setErrorText("Invalid order");
+    }
+    return result;
+  };
+
+  const handleNameBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setNameValid(nameValidation(e.target.value));
+  };
+
+  const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setEmailValid(emailValidation(e.target.value));
+  };
+
+  const validateOnMount = () => {
+    if (localStorage.email) {
+      setEmailValid(emailValidation(localStorage.email));
+    }
+    if (localStorage.name) {
+      setNameValid(nameValidation(localStorage.name));
+    }
+
+    setOrderValid(orderValidation());
+  };
+
+  useEffect(() => {
+    validateOnMount();
+  }, []);
+
   const submitOrder = async (formData: FormData) => {
     setLoading(true);
     const name = formData.get("name");
     const email = formData.get("email");
     const date = selectedDate;
 
-    if (!name || !email || !date) {
-      alert("Please fill out all fields!");
+    if (!name || !email) {
+      alert("Please fill out all fields before submitting the order!");
+      setLoading(false);
       return;
     }
 
     if (
-      order.currentOrder?.dishes.length === 0 ||
+      order.currentOrder?.meals.length === 0 ||
       order.currentOrder?.drinks.length === 0 ||
       order.currentOrder === undefined
     ) {
@@ -48,9 +118,10 @@ export default function ReviewPage() {
       );
       localStorage.setNameLS(name.toString());
       localStorage.setEmailLS(email.toString());
-      order.removeCurrentOrder();
+      order.cancelOrder();
       router.push(`/order/${email}`);
     }
+    setLoading(false);
   };
 
   const shouldDisableDate = (date: Date) => {
@@ -73,6 +144,7 @@ export default function ReviewPage() {
 
     return false;
   };
+
   if (loading) {
     return (
       <motion.div
@@ -106,7 +178,17 @@ export default function ReviewPage() {
                 placeholder="Your name"
                 defaultValue={localStorage.name || ""}
                 className="w-full rounded-md py-2 px-3 text-sm text-zinc-700 hover:border-blue-500 transition-colors border focus:border-blue-500"
+                onBlur={(e) => handleNameBlur(e)}
               />
+              <div className="flex flex-row w-full justify-end">
+                {nameValid === undefined ? (
+                  <></>
+                ) : nameValid ? (
+                  <FaCircleCheck className="relative -top-7 right-2 text-green-500 text-lg" />
+                ) : (
+                  <FaCircleXmark className="relative -top-7 right-2 text-red-500 text-lg" />
+                )}
+              </div>
             </div>
             <div>
               <h3 className="text-lg font-bold">Your E-mail:</h3>
@@ -116,7 +198,17 @@ export default function ReviewPage() {
                 placeholder="Your E-mail"
                 defaultValue={localStorage.email || ""}
                 className="w-full rounded-md py-2 px-3 text-sm text-zinc-700 hover:border-blue-500 transition-colors border focus:border-blue-500"
+                onBlur={(e) => handleEmailBlur(e)}
               />
+              <div className="flex flex-row w-full justify-end">
+                {emailValid === undefined ? (
+                  <div></div>
+                ) : emailValid ? (
+                  <FaCircleCheck className="relative -top-7 right-2 text-green-500 text-lg" />
+                ) : (
+                  <FaCircleXmark className="relative -top-7 right-2 text-red-500 text-lg" />
+                )}
+              </div>
             </div>
 
             <div>
@@ -146,60 +238,14 @@ export default function ReviewPage() {
 
             <button
               type="submit"
-              className="bg-green-700 text-white text-xl font-bold rounded-md p-2 w-full mt-auto h-24 hover:bg-green-500 transition-colors"
+              disabled={isFormValid ? false : true}
+              className="bg-green-700 text-white text-xl font-bold rounded-md p-2 w-full mt-auto h-12 md:h-24 hover:bg-green-500 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
-              Place order
+              {isFormValid ? "Place order" : errorText}
             </button>
           </form>
         </div>
-        <div className="flex flex-col w-full h-full justify-between bg-zinc-600 shadow-xl rounded-xl p-4">
-          {order.currentOrder && (
-            <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-bold">Your order:</h2>
-              <ul className="flex flex-col p-2 gap-2">
-                {order.currentOrder.dishes.map(({ dish, quantity }) => (
-                  <li
-                    key={dish.id}
-                    className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
-                  >
-                    <div className="flex flex-row gap-1">
-                      <p className="text-xl">{quantity}x</p>
-                      <p className="font-bold text-xl">{dish.name}</p>
-                      <p className="font-bold ml-auto text-xl">
-                        {dish.price * quantity} kr.
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between items-start gap-2">
-                      <p className="text-xs italic">{dish.ingredients}</p>
-                    </div>
-                  </li>
-                ))}
-                {order.currentOrder.drinks.map(({ drink, quantity }) => (
-                  <li
-                    key={drink.idDrink}
-                    className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
-                  >
-                    <div className="flex flex-row gap-1">
-                      <p className="text-xl">{quantity}x</p>
-                      <p className="font-bold text-xl">{drink.strDrink}</p>
-                      <p className="font-bold ml-auto text-xl">
-                        {drink.price * quantity} kr.
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between items-start gap-2">
-                      <p className="text-xs italic">{drink.strCategory}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <div className="flex flex-row items-center p-4 bg-zinc-500 rounded-xl">
-            <h3 className="text-lg font-bold">
-              Total: {order.getCurrentPrice()} kr
-            </h3>
-          </div>
-        </div>
+        <OrderCard />
       </motion.div>
     );
   }

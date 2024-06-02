@@ -18,7 +18,7 @@ export default function DishesPage() {
         <motion.div
           id="card"
           key={"Dishes card"}
-          className="w-ful md:w-2/3 bg-request-orange rounded-xl overflow-auto h-full"
+          className="w-full md:w-2/3 bg-request-orange rounded-xl overflow-auto "
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >

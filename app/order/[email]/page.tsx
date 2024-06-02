@@ -17,6 +17,7 @@ import "rsuite/Placeholder/styles/index.css";
 import { Loader } from "rsuite";
 import { AnimatePresence, motion } from "framer-motion";
 import { forEach } from "lodash";
+import ItemImage from "@/app/components/ItemImage";
 
 export default function OrderPage() {
   const order = useOrder();
@@ -29,8 +30,8 @@ export default function OrderPage() {
   const editOrder = (orderToEdit: OrderType) => {
     order.currentOrder = orderToEdit;
     console.log(orderToEdit);
-    forEach(orderToEdit.dishes, (dish) => {
-      order.updateDishes(dish.dish);
+    forEach(orderToEdit.meals, (dish) => {
+      order.updateDishes(dish.meal);
     });
     forEach(orderToEdit.drinks, (drink) => {
       order.updateDrinks(drink.drink);
@@ -108,7 +109,7 @@ export default function OrderPage() {
             <ul className="flex flex-col w-1/3 bg-zinc-700 border-black overflow-auto ">
               {orders.map((order) => (
                 <li
-                  className={`flex flex-row justify-between items-center gap-4 w-full p-4 border-b-2 hover:bg-zinc-300  transition-colors ${
+                  className={`flex flex-row justify-between items-center gap-4 w-full p-4 border-b-2 transition-colors select-none ${
                     selectedOrder?.id === order.id
                       ? "bg-request-orange text-white hover:bg-request-orange"
                       : "bg-white text-black"
@@ -173,46 +174,42 @@ export default function OrderPage() {
                       </h2>
                     </div>
                     <h2 className="text-lg font-bold">Pöntunin þín:</h2>
-                    <ul className="flex flex-col gap-2 overflow-auto">
-                      {selectedOrder.dishes.map((item) => (
-                        <li
-                          key={item.dish.id}
+                    <ul className="flex flex-col gap-2 overflow-auto h-full">
+                      {selectedOrder.meals.map((item) => (
+                        <motion.li
+                          key={item.meal.idMeal + selectedOrder.id}
                           className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black h-20"
+                          initial={{ opacity: 0, translateY: 80 }}
+                          animate={{ opacity: 1, translateY: 0 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.4, type: "spring" }}
                         >
-                          <img
-                            src="/dishImages/_80b0946c-ec77-41dc-804b-62c0b3e9251f-430182224_2117777741914944_2539049768948188489_n.png"
-                            alt=""
-                            className="rounded-xl object-contain"
-                            width="50"
-                            height="50"
-                          />
+                          <ItemImage url={item.meal.strMealThumb} />
                           <div className="flex flex-col w-full">
                             <div className="flex flex-row justify-between">
                               <h3 className="font-bold text-lg">
-                                {item.quantity}x {item.dish.name}
+                                {item.quantity}x {item.meal.strMeal}
                               </h3>
                               <p className="font-bold text-xl">
-                                {item.dish.price * item.quantity} kr.
+                                {item.meal.price * item.quantity} kr.
                               </p>
                             </div>
                             <p className="text-sm italic">
-                              {item.dish.ingredients}
+                              {item.meal.strCategory}
                             </p>
                           </div>
-                        </li>
+                        </motion.li>
                       ))}
                       {selectedOrder.drinks.map((item) => (
-                        <li
-                          key={item.drink.idDrink}
+                        <motion.li
+                          key={item.drink.idDrink + selectedOrder.id}
                           className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black h-20"
+                          initial={{ opacity: 0, translateY: 80 }}
+                          animate={{ opacity: 1, translateY: 0 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.4, type: "spring" }}
                         >
-                          <img
-                            src={item.drink.strDrinkThumb}
-                            alt="Image of drink"
-                            className="rounded-xl object-cover"
-                            width="50"
-                            height="50"
-                          />
+                          <ItemImage url={item.drink.strDrinkThumb} />
                           <div className="flex flex-col w-full">
                             <div className="flex flex-row justify-between w-full">
                               <h3 className="font-bold text-lg">
@@ -226,7 +223,7 @@ export default function OrderPage() {
                               {item.drink.strCategory}
                             </p>
                           </div>
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                     <div className="flex flex-row mt-auto bg-zinc-600 w-full h-16 rounded-xl items-center p-2 justify-between">

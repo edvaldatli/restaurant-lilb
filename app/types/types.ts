@@ -15,3 +15,11 @@ export type DishType = {
   price: number;
   ingredients: string;
 };
+
+export type MealType = {
+  idMeal: string;
+  strMeal: string;
+  strMealThumb: string;
+  strCategory: string;
+  price: number;
+}

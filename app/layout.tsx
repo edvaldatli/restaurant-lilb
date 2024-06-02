@@ -1,14 +1,12 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import StepStatusBar from "./components/StepStatusBar";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { CustomProvider } from "rsuite";
-import is_IS from "./locales/is_IS";
 
 import { LocalStorageProvider } from "./context/LocalStorage";
 import OrderProvider from "./context/OrderContext";
 import { Metadata } from "next";
+import Navbar from "./components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +30,7 @@ export default function RootLayout({
       <body>
         <OrderProvider>
           <LocalStorageProvider>
-            <StepStatusBar />
+            <Navbar />
             <div className="px-4 lg:px-2 2xl:px-72 pt-6 pb-8 lg:pt-24 h-screen max-h-screen overflow-hidden">
               {children}
             </div>

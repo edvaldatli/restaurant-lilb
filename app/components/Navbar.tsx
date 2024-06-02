@@ -7,7 +7,7 @@ import RoutingButton from "./RoutingButton";
 import Link from "next/link";
 import { useMediaQuery } from "../utils/mobileFunctions";
 
-export default function StepStatusBar() {
+export default function Navbar() {
   const navItems = [
     { path: "/", label: "Home", number: 1 },
     { path: "/dishes", label: "Dishes", number: 2 },
@@ -69,12 +69,12 @@ export default function StepStatusBar() {
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <button
-                className="flex flex-row gap-2 justify-center items-center  transition h-12 p-4 rounded-xl"
-                onClick={() => router.back()}
-              >
-                <FaAngleLeft />
-              </button>
+              <RoutingButton
+                type="back"
+                disabled={false}
+                className="flex flex-row items-center text-lg ml-2 gap-2"
+                text="Back"
+              />
             </motion.div>
           </AnimatePresence>
         )}
