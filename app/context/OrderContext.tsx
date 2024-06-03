@@ -17,6 +17,7 @@ const OrderContext = createContext<{
   getCurrentPrice: () => number;
   cancelOrder: () => void;
   setIdOfOrder: (id: string) => void;
+  setOrder: (order: OrderContextType) => void;
 }>({
   currentOrder: { meals: [], drinks: [], id: undefined },
   updateDrinks: () => {},
@@ -26,6 +27,7 @@ const OrderContext = createContext<{
   getCurrentPrice: () => 0,
   cancelOrder: () => {},
   setIdOfOrder: () => {},
+  setOrder: () => {},
 });
 
 export const useOrder = () => useContext(OrderContext);
@@ -150,6 +152,10 @@ export default function OrderProvider({
     setCurrentOrder({ meals: [], drinks: [], id: undefined });
   };
 
+  const setOrder = (order: OrderContextType) => {
+    setCurrentOrder(order);
+  };
+
   return (
     <OrderContext.Provider
       value={{
@@ -161,6 +167,7 @@ export default function OrderProvider({
         getCurrentPrice,
         cancelOrder,
         setIdOfOrder,
+        setOrder,
       }}
     >
       {children}

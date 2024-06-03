@@ -16,7 +16,6 @@ import "rsuite/Loader/styles/index.css";
 import "rsuite/Placeholder/styles/index.css";
 import { Loader } from "rsuite";
 import { AnimatePresence, motion } from "framer-motion";
-import { forEach } from "lodash";
 import ItemImage from "@/app/components/ItemImage";
 
 export default function OrderPage() {
@@ -28,14 +27,7 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(true);
 
   const editOrder = (orderToEdit: OrderType) => {
-    order.currentOrder = orderToEdit;
-    console.log(orderToEdit);
-    forEach(orderToEdit.meals, (dish) => {
-      order.updateDishes(dish.meal);
-    });
-    forEach(orderToEdit.drinks, (drink) => {
-      order.updateDrinks(drink.drink);
-    });
+    order.setOrder(orderToEdit);
 
     if (orderToEdit.id) order.setIdOfOrder(orderToEdit.id);
 

@@ -42,9 +42,9 @@ export async function uploadOrder(
     if (!checkData) {
       throw new Error("Order does not exist");
     }
-    await pb.collection("order").update(data.id, data);
+    const results = await pb.collection("order").update(data.id, data);
     console.log("Order updated");
-    return;
+    return results;
   } else {
     const results = await pb.collection("order").create(data);
     console.log(results);
