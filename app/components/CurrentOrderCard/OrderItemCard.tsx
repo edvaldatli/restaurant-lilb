@@ -26,13 +26,6 @@ const OrderItemCard = React.memo(
       animate={{ opacity: 1, translateY: 0 }}
       exit={{ opacity: 0, translateX: 20 }}
       className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
-      key={
-        isMealType(item)
-          ? item.idMeal
-          : isCocktailType(item)
-          ? item.idDrink
-          : undefined
-      }
     >
       <div className="flex flex-row gap-1">
         <p>{quantity}x</p>
