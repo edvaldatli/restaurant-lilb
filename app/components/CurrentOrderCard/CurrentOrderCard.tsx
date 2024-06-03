@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { FaTrash, FaInfo } from "react-icons/fa";
-import RoutingButton from "./RoutingButton";
-import { useOrder } from "../context/OrderContext";
+import { FaTrash, FaInfo, FaCross } from "react-icons/fa";
+import RoutingButton from "../RoutingButton";
+import { useOrder } from "../../context/OrderContext";
 import { usePathname } from "next/navigation";
 import React from "react";
-import OrderItemCard from "./CurrentOrderCard/OrderItemCard";
+import OrderItemCard from "./OrderItemCard";
+import { FaX } from "react-icons/fa6";
 
 export default function CurrentOrderCard() {
   const order = useOrder();
@@ -67,10 +68,13 @@ export default function CurrentOrderCard() {
           }
         />
         <button
-          className="flex flex-row justify-center items-center bg-red-600 p-2 rounded-xl text-xl font-semibold gap-2"
+          className="flex flex-row justify-center items-center bg-red-600 p-2 rounded-xl text-xl font-semibold gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors hover:bg-red-500"
           onClick={() => order.cancelOrder()}
+          disabled={
+            currentOrder.meals.length === 0 && currentOrder.drinks.length === 0
+          }
         >
-          Cancel <FaTrash />
+          Clear order <FaX />
         </button>
       </div>
     </div>

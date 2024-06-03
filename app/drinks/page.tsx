@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion, stagger, useAnimate } from "framer-motion";
 import { useEffect } from "react";
-import CurrentOrderCard from "../components/CurrentOrderCard";
+import CurrentOrderCard from "../components/CurrentOrderCard/CurrentOrderCard";
 import DrinksContainer from "../components/drinksComponents/DrinksContainer";
 
 export default function DrinksPage() {
