@@ -22,13 +22,22 @@ export const checkBookingHandled = (bookingTime: Date) => {
 
 export const getNextQuarterHour = () => {
   const now = new Date();
+  const openingHour = 12; // Assuming opening time is 12:00 PM
+  const openingMinute = 0;
+  
+  // Set the current time to the next quarter hour
   const minutes = now.getMinutes();
-  const remainder = 15 - (minutes % 15);
-  if (remainder === 15) {
-    return now;
+  const nextQuarter = Math.ceil(minutes / 15) * 15;
+  now.setMinutes(nextQuarter, 0, 0);
+
+  // Create a new date object for the opening time
+  const openingTime = new Date();
+  openingTime.setHours(openingHour, openingMinute, 0, 0);
+
+  // If the current time is before the opening time, return the opening time
+  if (now < openingTime) {
+    return openingTime;
   }
-  now.setMinutes(minutes + remainder);
-  now.setSeconds(0);
-  now.setMilliseconds(0);
+
   return now;
 };

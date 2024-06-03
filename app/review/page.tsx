@@ -73,7 +73,7 @@ export default function ReviewPage() {
       return false;
     }
 
-    setErrorText(""); // Clear any previous error text
+    setErrorText("");
     return true;
   };
 
