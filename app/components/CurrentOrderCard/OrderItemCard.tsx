@@ -58,4 +58,6 @@ const OrderItemCard = React.memo(
   )
 );
 
+OrderItemCard.displayName = "OrderItemCard";
+
 export default OrderItemCard;
