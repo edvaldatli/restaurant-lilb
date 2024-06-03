@@ -1,7 +1,5 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { FaAngleLeft } from "react-icons/fa";
-import Number from "./Number";
 import { AnimatePresence, motion } from "framer-motion";
 import RoutingButton from "./RoutingButton";
 import Link from "next/link";

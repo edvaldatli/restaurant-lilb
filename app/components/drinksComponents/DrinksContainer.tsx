@@ -8,8 +8,9 @@ import toast, { Toaster } from "react-hot-toast";
 import { useMediaQuery } from "../../utils/mobileFunctions";
 import ItemImage from "../ItemImage";
 import { AnimatePresence, Reorder, motion } from "framer-motion";
+import DishCard from "../ItemCard";
 
-export default function DrinksCard() {
+export default function DrinksContainer() {
   const [query, setQuery] = useState<string>("a");
   const [results, setResults] = useState<CocktailType[]>([]);
   const { updateDrinks } = useOrder();
@@ -84,39 +85,10 @@ export default function DrinksCard() {
                 onReorder={setResults}
                 className="flex flex-col gap-4"
               >
-                <AnimatePresence>
-                  <motion.div
-                    initial={{ opacity: 0, translateY: 20 }}
-                    animate={{ opacity: 1, translateY: 0 }}
-                    exit={{ opacity: 0, translateX: 20 }}
-                    className="flex flex-row gap-4 bg-white rounded-xl p-4 text-black shadow-xl h-20 md:h-32"
-                    key={cocktail.idDrink}
-                  >
-                    <ItemImage url={cocktail.strDrinkThumb} />
-                    <div className="flex flex-row justify-between w-full">
-                      <div className="flex flex-col">
-                        <h2 className="font-bold text-xl line-clamp-1">
-                          {cocktail.strDrink}
-                        </h2>
-                        <p className="font-light text-sm">
-                          {cocktail.strCategory}
-                        </p>
-                      </div>
-                      <div className="flex flex-col justify-between">
-                        <p className="font-bold text-xl text-right">
-                          {cocktail.price} kr.
-                        </p>
-                        <button
-                          className="flex flex-row items-center gap-2 px-4 py-2 bg-green-700 text-white font-bold rounded-full h-8 transition-colors hover:bg-green-500"
-                          onClick={() => addDrinks(cocktail)}
-                        >
-                          Add
-                          <FaPlus />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                <DishCard
+                  item={cocktail}
+                  onAddToCart={() => addDrinks(cocktail)}
+                />
               </Reorder.Group>
             ))}
           </>

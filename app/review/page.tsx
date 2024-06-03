@@ -19,7 +19,8 @@ export default function ReviewPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [emailValid, setEmailValid] = useState<boolean>();
   const [nameValid, setNameValid] = useState<boolean>();
-  const [orderValid, setOrderValid] = useState<boolean>(false);
+  const [dateValid, setDateValid] = useState<boolean>();
+  const [orderValid, setOrderValid] = useState<boolean>();
   const [errorText, setErrorText] = useState<string>("");
   const localStorage = useLocalStorage();
   const order = useOrder();
@@ -29,9 +30,11 @@ export default function ReviewPage() {
     emailValid !== undefined &&
     nameValid !== undefined &&
     orderValid !== undefined &&
+    dateValid !== undefined &&
     emailValid &&
     nameValid &&
-    orderValid;
+    orderValid &&
+    dateValid;
 
   const emailValidation = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,6 +51,51 @@ export default function ReviewPage() {
       setErrorText("Invalid name");
     }
     return result;
+  };
+
+  const dateValidation = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset today's time to midnight
+    const dateCopy = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+
+    if (dateCopy < today) {
+      setErrorText("Invalid date");
+      return false;
+    }
+
+    const now = new Date();
+    if (dateCopy.getTime() === today.getTime() && now.getHours() >= 22) {
+      setErrorText("Invalid date");
+      return false;
+    }
+
+    setErrorText(""); // Clear any previous error text
+    return true;
+  };
+
+  const shouldDisableDate = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dateCopy = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+
+    if (dateCopy < today) {
+      return true;
+    }
+
+    const now = new Date();
+    if (dateCopy.getTime() === today.getTime() && now.getHours() >= 22) {
+      return true;
+    }
+
+    return false;
   };
 
   const orderValidation = () => {
@@ -71,6 +119,10 @@ export default function ReviewPage() {
     setEmailValid(emailValidation(e.target.value));
   };
 
+  const handleDateBlur = (date: Date) => {
+    setDateValid(dateValidation(date));
+  };
+
   const validateOnMount = () => {
     if (localStorage.email) {
       setEmailValid(emailValidation(localStorage.email));
@@ -78,7 +130,7 @@ export default function ReviewPage() {
     if (localStorage.name) {
       setNameValid(nameValidation(localStorage.name));
     }
-
+    setDateValid(dateValidation(selectedDate));
     setOrderValid(orderValidation());
   };
 
@@ -107,7 +159,7 @@ export default function ReviewPage() {
       router.push("/dishes");
       return;
     } else {
-      await uploadOrder(
+      const result = await uploadOrder(
         order.currentOrder,
         new Date(),
         date,
@@ -119,30 +171,9 @@ export default function ReviewPage() {
       localStorage.setNameLS(name.toString());
       localStorage.setEmailLS(email.toString());
       order.cancelOrder();
-      router.push(`/order/${email}`);
+      router.push(`/order/${email}/${result?.id}`);
     }
     setLoading(false);
-  };
-
-  const shouldDisableDate = (date: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset today's time to midnight
-    const dateCopy = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-    if (dateCopy < today) {
-      return true;
-    }
-
-    const now = new Date();
-    if (dateCopy.getTime() === today.getTime() && now.getHours() >= 22) {
-      return true;
-    }
-
-    return false;
   };
 
   if (loading) {
@@ -219,6 +250,7 @@ export default function ReviewPage() {
                     name="date"
                     placeholder="Select date"
                     shouldDisableDate={shouldDisableDate}
+                    onBlur={() => handleDateBlur(selectedDate)}
                     format="dd/MM/yyyy HH:mm"
                     defaultValue={selectedDate}
                     hideHours={(hour) =>

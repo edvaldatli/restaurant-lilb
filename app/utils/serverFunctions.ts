@@ -46,8 +46,12 @@ export async function uploadOrder(
     console.log("Order updated");
     return;
   } else {
-    await pb.collection("order").create(data);
-    console.log("Order created");
+    const results = await pb.collection("order").create(data);
+    console.log(results);
+    if (!results) {
+      throw new Error("Error creating order");
+    }
+    return results;
   }
 }
 

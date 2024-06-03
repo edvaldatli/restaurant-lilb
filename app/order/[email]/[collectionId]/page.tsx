@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { OrderType, getAllOrdersByEmail } from "../../utils/serverFunctions";
+import { OrderType, getAllOrdersByEmail } from "../../../utils/serverFunctions";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaAngleLeft, FaAngleRight, FaEdit } from "react-icons/fa";
@@ -10,7 +10,7 @@ import {
   formatDate,
   formatBookingDate,
   checkBookingHandled,
-} from "../../utils/dateFormat";
+} from "../../../utils/dateFormat";
 
 import "rsuite/Loader/styles/index.css";
 import "rsuite/Placeholder/styles/index.css";
@@ -22,7 +22,7 @@ import ItemImage from "@/app/components/ItemImage";
 export default function OrderPage() {
   const order = useOrder();
   const router = useRouter();
-  const { email: orderEmail } = useParams();
+  const { email: orderEmail, collectionId: orderId } = useParams();
   const [orders, setOrders] = useState<OrderType[]>();
   const [selectedOrder, setSelcectedOrder] = useState<OrderType>();
   const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ export default function OrderPage() {
           console.error("No orders found for email", orderEmail);
         } else {
           setOrders(orders);
-          setSelcectedOrder(orders[0]);
+          setSelcectedOrder(orders.find((order) => order.id === orderId));
         }
       } catch (e) {
         console.error("Error fetching the latest order", e);

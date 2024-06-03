@@ -6,7 +6,7 @@ export default function OrderCard() {
   return (
     <div className="flex flex-col w-full h-full justify-between bg-zinc-600 shadow-xl rounded-xl p-4">
       {order.currentOrder && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 overflow-auto">
           <h2 className="text-2xl font-bold">Your order:</h2>
           <ul className="flex flex-col p-2 gap-2">
             {order.currentOrder.meals.map(({ meal, quantity }) => (
