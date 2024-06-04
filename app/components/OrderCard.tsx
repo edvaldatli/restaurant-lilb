@@ -1,10 +1,11 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import { getCurrentPrice, selectOrder } from "@/features/order/selectors";
 
 export default function OrderCard() {
-  const order = useSelector((state: RootState) => selectOrder(state));
-  const currentPrice = useSelector(getCurrentPrice);
+  const order = useSelector((state: RootState) => state.order.order);
+  const currentPrice = useSelector(
+    (state: RootState) => state.order.order.totalPrice
+  );
 
   return (
     <div className="flex flex-col w-full h-full justify-between bg-zinc-600 shadow-xl rounded-xl p-4">

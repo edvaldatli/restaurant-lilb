@@ -1,5 +1,4 @@
 import { useLocalStorage } from "../../context/LocalStorage";
-import Link from "next/link";
 import RoutingButton from "../RoutingButton";
 
 export default function WelcomeCard() {

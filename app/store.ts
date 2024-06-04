@@ -3,8 +3,8 @@ import orderSlice from '@/features/order/orderSlice';
 
 export const store = configureStore({
     reducer: {
-        order: orderSlice
-    },
+        order: orderSlice,
+    }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

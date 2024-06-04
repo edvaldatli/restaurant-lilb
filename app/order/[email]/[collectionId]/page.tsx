@@ -27,8 +27,8 @@ export default function OrderPage() {
   const [selectedOrder, setSelcectedOrder] = useState<OrderType>();
   const [loading, setLoading] = useState(true);
 
-  const editOrder = (orderToEdit: OrderType) => {
-    dispatch(setCurrentEditOrder(orderToEdit));
+  const editOrder = ({ id, drinks, meals, total }: OrderType) => {
+    dispatch(setCurrentEditOrder({ id, drinks, meals, totalPrice: total }));
 
     router.push("/dishes");
   };
@@ -217,15 +217,17 @@ export default function OrderPage() {
                         </motion.li>
                       ))}
                     </ul>
-                    <div className="flex flex-row mt-auto bg-zinc-600 w-full h-16 rounded-xl items-center p-2 justify-between">
-                      <button
-                        onClick={() => editOrder(selectedOrder)}
-                        className="flex flex-row items-center gap-2 bg-green-600 h-full rounded-xl px-6 py-3 font-bold transition-colors hover:bg-green-400"
-                      >
-                        Breyta pöntun
-                        <FaEdit />
-                      </button>
-                      <h3 className="text-lg font-bold">
+                    <div className="flex flex-row mt-auto bg-zinc-600 w-full min-h-16 rounded-xl items-center p-2 justify-between">
+                      {checkBookingHandled(selectedOrder.time) === false && (
+                        <button
+                          onClick={() => editOrder(selectedOrder)}
+                          className="flex flex-row items-center gap-2 bg-green-600 h-full rounded-xl px-6 py-3 font-bold transition-colors hover:bg-green-400"
+                        >
+                          Breyta pöntun
+                          <FaEdit />
+                        </button>
+                      )}
+                      <h3 className="text-xl font-bold ml-auto">
                         Samtals: {selectedOrder.total} kr.
                       </h3>
                     </div>

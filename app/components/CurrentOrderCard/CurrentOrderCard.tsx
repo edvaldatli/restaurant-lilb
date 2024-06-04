@@ -1,8 +1,9 @@
+"use client";
 import { AnimatePresence } from "framer-motion";
 import { FaInfo } from "react-icons/fa";
 import RoutingButton from "../RoutingButton";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import OrderItemCard from "./OrderItemCard";
 import { FaX } from "react-icons/fa6";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,17 +12,20 @@ import {
   removeDish,
   removeDrink,
 } from "@/features/order/orderSlice";
-import { getCurrentPrice, selectOrder } from "@/features/order/selectors";
 import { RootState } from "@/app/store";
 
 export default function CurrentOrderCard() {
-  const order = useSelector((state: RootState) => selectOrder(state));
-  const currentPrice = useSelector((state: RootState) =>
-    getCurrentPrice(state)
+  const order = useSelector((state: RootState) => state.order.order);
+  const totalPrice = useSelector(
+    (state: RootState) => state.order.order.totalPrice
   );
+
   const dispatch = useDispatch();
   const currentPath = usePathname();
 
+  useEffect(() => {
+    console.log(totalPrice);
+  }, [order]);
   return (
     <div className="flex flex-col h-full p-4 select-none">
       {order.id && (
@@ -44,7 +48,7 @@ export default function CurrentOrderCard() {
                 key={meal.idMeal}
                 item={meal}
                 quantity={quantity}
-                removeItem={() => dispatch(removeDish({ idMeal: meal.idMeal }))}
+                removeItem={() => dispatch(removeDish(meal))}
               />
             ))}
             <p className="font-semibold" key={"drinks-p"}>
@@ -55,16 +59,14 @@ export default function CurrentOrderCard() {
                 key={drink.idDrink}
                 item={drink}
                 quantity={quantity}
-                removeItem={() =>
-                  dispatch(removeDrink({ idDrink: drink.idDrink }))
-                }
+                removeItem={() => dispatch(removeDrink(drink))}
               />
             ))}
           </AnimatePresence>
         )}
       </ul>
       <div className="flex flex-col mt-auto gap-2">
-        <h3 className="ml-auto text-lg font-bold">Total: {currentPrice} kr.</h3>
+        <h3 className="ml-auto text-lg font-bold">Total: {totalPrice} kr.</h3>
         <RoutingButton
           text="Next"
           className="flex flex-row justify-center items-center bg-green-700 p-2 rounded-xl text-xl font-semibold hover:bg-green-500 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"

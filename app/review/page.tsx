@@ -12,13 +12,14 @@ import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
 import OrderCard from "../components/OrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { getCurrentPrice, selectOrder } from "@/features/order/selectors";
 import { cancelOrder } from "@/features/order/orderSlice";
 
 export default function ReviewPage() {
-  const order = useSelector((state: RootState) => selectOrder(state));
+  const order = useSelector((state: RootState) => state.order.order);
+  const currentPrice = useSelector(
+    (state: RootState) => state.order.order.totalPrice
+  );
   const dispatch = useDispatch();
-  const currentPrice = useSelector(getCurrentPrice);
 
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(getNextQuarterHour());
@@ -69,7 +70,7 @@ export default function ReviewPage() {
 
   const dateValidation = (date: Date) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset today's time to midnight
+    today.setHours(0, 0, 0, 0);
     const dateCopy = new Date(
       date.getFullYear(),
       date.getMonth(),

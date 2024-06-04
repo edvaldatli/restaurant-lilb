@@ -5,7 +5,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { LocalStorageProvider } from "./context/LocalStorage";
-import OrderProvider from "./context/OrderContext";
 import Navbar from "./components/Navbar";
 
 import { store } from "./store";
