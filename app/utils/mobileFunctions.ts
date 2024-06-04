@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 
 export const useMediaQuery = (width: number) => {
   const [isMatch, setIsMatch] = useState(false);

@@ -1,7 +1,6 @@
 import { useLocalStorage } from "../../context/LocalStorage";
 import { useRouter } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
-import { LocalStorageProvider } from "../../context/LocalStorage";
 
 export default function OldOrderCard() {
   const router = useRouter();

@@ -1,4 +1,3 @@
-import { OrderContextType } from "../context/OrderContext";
 import PocketBase from "pocketbase";
 import { CocktailType, MealType } from "../types/types";
 
@@ -13,10 +12,15 @@ export type OrderType = {
   total: number;
 };
 
+type ItemsType = {
+  meals: { meal: MealType; quantity: number }[];
+  drinks: { drink: CocktailType; quantity: number }[];
+};
+
 const pb = new PocketBase(process.env.NEXT_PUBLIC_DB_HOST);
 
 export async function uploadOrder(
-  order: OrderContextType,
+  order: ItemsType,
   orderTimestamp: Date,
   time: Date,
   firstName: string,
@@ -34,8 +38,7 @@ export async function uploadOrder(
     total: total,
     id: id || undefined,
   };
-  console.log(id);
-  console.log(data.id);
+
   if (data.id) {
     const checkData = await pb.collection("order").getOne(data.id);
     console.log(checkData);

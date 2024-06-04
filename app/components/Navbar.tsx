@@ -2,7 +2,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import RoutingButton from "./RoutingButton";
-import Link from "next/link";
 import { useMediaQuery } from "../utils/mobileFunctions";
 
 export default function Navbar() {
