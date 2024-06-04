@@ -2,7 +2,6 @@
 import { useState, useEffect, Suspense } from "react";
 import debounce from "lodash/debounce";
 import { CocktailType } from "../../types/types";
-import { useOrder } from "@/app/context/OrderContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useMediaQuery } from "../../utils/mobileFunctions";
 import { Reorder } from "framer-motion";

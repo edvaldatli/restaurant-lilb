@@ -43,15 +43,14 @@ export default function Navbar() {
         )}
         {navItems.map((item) => {
           return (
-            <Link
-              href={item.path}
+            <h2
               key={item.number}
               className={`flex h-full items-center px-16 gap-2 hover:bg-request-red transition-colors ${
                 path === item.path ? "bg-zinc-800" : ""
               }`}
             >
               {item.label}
-            </Link>
+            </h2>
           );
         })}
       </nav>
