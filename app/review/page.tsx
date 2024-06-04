@@ -10,7 +10,6 @@ import is_IS from "../locales/is_IS";
 import { getNextQuarterHour } from "../utils/dateFormat";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
 import OrderCard from "../components/OrderCard";
-
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { getCurrentPrice, selectOrder } from "@/features/order/selectors";
