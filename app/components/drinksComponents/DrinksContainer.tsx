@@ -1,19 +1,22 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
-import { FaPlus } from "react-icons/fa";
 import debounce from "lodash/debounce";
 import { CocktailType } from "../../types/types";
 import { useOrder } from "@/app/context/OrderContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useMediaQuery } from "../../utils/mobileFunctions";
-import ItemImage from "../ItemImage";
-import { AnimatePresence, Reorder, motion } from "framer-motion";
+import { Reorder } from "framer-motion";
 import DishCard from "../ItemCard";
 
+import { useDispatch, useSelector } from "react-redux";
+import { updateDrinks } from "@/features/order/orderSlice";
+import { RootState } from "@/app/store";
+
 export default function DrinksContainer() {
+  const order = useSelector((state: RootState) => state.order);
+  const dispatch = useDispatch();
   const [query, setQuery] = useState<string>("a");
   const [results, setResults] = useState<CocktailType[]>([]);
-  const { updateDrinks } = useOrder();
 
   const isDesktop = useMediaQuery(768);
 
@@ -40,7 +43,7 @@ export default function DrinksContainer() {
 
   const addDrinks = (drink: CocktailType) => {
     if (!isDesktop) toast.success(`🍸 ${drink.strDrink} added to cart`);
-    updateDrinks({ ...drink, price: 1000 });
+    dispatch(updateDrinks(drink));
   };
 
   useEffect(() => {

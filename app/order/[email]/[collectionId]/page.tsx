@@ -4,7 +4,8 @@ import { OrderType, getAllOrdersByEmail } from "../../../utils/serverFunctions";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaAngleLeft, FaAngleRight, FaEdit } from "react-icons/fa";
-import { useOrder } from "@/app/context/OrderContext";
+import { useDispatch } from "react-redux";
+import { setCurrentEditOrder } from "@/features/order/orderSlice";
 
 import {
   formatDate,
@@ -19,7 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ItemImage from "@/app/components/ItemImage";
 
 export default function OrderPage() {
-  const order = useOrder();
+  const dispatch = useDispatch();
   const router = useRouter();
   const { email: orderEmail, collectionId: orderId } = useParams();
   const [orders, setOrders] = useState<OrderType[]>();
@@ -27,9 +28,7 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(true);
 
   const editOrder = (orderToEdit: OrderType) => {
-    order.setOrder(orderToEdit);
-
-    if (orderToEdit.id) order.setIdOfOrder(orderToEdit.id);
+    dispatch(setCurrentEditOrder(orderToEdit));
 
     router.push("/dishes");
   };

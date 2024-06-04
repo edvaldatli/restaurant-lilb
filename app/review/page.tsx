@@ -10,46 +10,62 @@ import { motion } from "framer-motion";
 import is_IS from "../locales/is_IS";
 import { getNextQuarterHour } from "../utils/dateFormat";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
-import OrderCard from "../components/orderCard";
-import { error } from "console";
+import OrderCard from "../components/OrderCard";
+
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { getCurrentPrice, selectOrder } from "@/features/order/selectors";
+import { cancelOrder } from "@/features/order/orderSlice";
 
 export default function ReviewPage() {
+  const order = useSelector((state: RootState) => selectOrder(state));
+  const dispatch = useDispatch();
+  const currentPrice = useSelector(getCurrentPrice);
+
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(getNextQuarterHour());
+  const [formValidation, setFormValidation] = useState<{
+    email: boolean;
+    name: boolean;
+    date: boolean;
+    order: boolean;
+    errorText: string;
+  }>({
+    email: false,
+    name: false,
+    date: false,
+    order: false,
+    errorText: "error",
+  });
   const [loading, setLoading] = useState<boolean>(false);
-  const [emailValid, setEmailValid] = useState<boolean>();
-  const [nameValid, setNameValid] = useState<boolean>();
-  const [dateValid, setDateValid] = useState<boolean>();
-  const [orderValid, setOrderValid] = useState<boolean>();
-  const [errorText, setErrorText] = useState<string>("");
   const localStorage = useLocalStorage();
-  const order = useOrder();
   const date: Date = new Date();
 
   const isFormValid =
-    emailValid !== undefined &&
-    nameValid !== undefined &&
-    orderValid !== undefined &&
-    dateValid !== undefined &&
-    emailValid &&
-    nameValid &&
-    orderValid &&
-    dateValid;
+    formValidation.email &&
+    formValidation.name &&
+    formValidation.date &&
+    formValidation.order;
 
   const emailValidation = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const result = emailRegex.test(email);
-    if (!result) {
-      setErrorText("Invalid email");
-    }
+    setFormValidation((prev) => ({
+      ...prev,
+      email: result,
+      errorText: result ? "" : "Invalid email",
+    }));
+    console.log(result);
     return result;
   };
 
   const nameValidation = (name: string) => {
     const result = name.length > 0;
-    if (!result) {
-      setErrorText("Invalid name");
-    }
+    setFormValidation((prev) => ({
+      ...prev,
+      name: result,
+      errorText: result! ? "" : "Invalid name",
+    }));
     return result;
   };
 
@@ -62,19 +78,17 @@ export default function ReviewPage() {
       date.getDate()
     );
 
-    if (dateCopy < today) {
-      setErrorText("Invalid date");
-      return false;
-    }
+    const isValid = !(
+      dateCopy < today ||
+      (dateCopy.getTime() === today.getTime() && new Date().getHours() >= 22)
+    );
 
-    const now = new Date();
-    if (dateCopy.getTime() === today.getTime() && now.getHours() >= 22) {
-      setErrorText("Invalid date");
-      return false;
-    }
-
-    setErrorText("");
-    return true;
+    setFormValidation((prev) => ({
+      ...prev,
+      date: isValid,
+      errorText: isValid ? "" : "Invalid date",
+    }));
+    return isValid;
   };
 
   const shouldDisableDate = (date: Date) => {
@@ -86,57 +100,60 @@ export default function ReviewPage() {
       date.getDate()
     );
 
-    if (dateCopy < today) {
-      return true;
-    }
-
-    const now = new Date();
-    if (dateCopy.getTime() === today.getTime() && now.getHours() >= 22) {
-      return true;
-    }
-
-    return false;
+    return (
+      dateCopy < today ||
+      (dateCopy.getTime() === today.getTime() && new Date().getHours() >= 22)
+    );
   };
 
   const orderValidation = () => {
-    const currentOrder = order.currentOrder;
-    const result =
-      (currentOrder &&
-        currentOrder.meals.length > 0 &&
-        currentOrder.drinks.length > 0) ||
-      false;
-    if (!result) {
-      setErrorText("Invalid order");
-    }
-    return result;
+    const isValid = order && order.meals.length > 0 && order.drinks.length > 0;
+    setFormValidation((prev) => ({
+      ...prev,
+      order: isValid,
+      errorText: isValid ? "" : "Invalid order",
+    }));
+    return isValid;
   };
 
   const handleNameBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    setNameValid(nameValidation(e.target.value));
+    nameValidation(e.target.value);
   };
 
   const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    setEmailValid(emailValidation(e.target.value));
+    emailValidation(e.target.value);
   };
 
   const handleDateBlur = (date: Date) => {
-    setDateValid(dateValidation(date));
+    dateValidation(date);
   };
 
   const validateOnMount = () => {
-    if (localStorage.email) {
-      setEmailValid(emailValidation(localStorage.email));
-    }
-    if (localStorage.name) {
-      setNameValid(nameValidation(localStorage.name));
-    }
-    setDateValid(dateValidation(selectedDate));
-    setOrderValid(orderValidation());
+    const initialEmail = localStorage.email;
+    const initialName = localStorage.name;
+    const initialDate = selectedDate;
+
+    const emailIsValid = initialEmail ? emailValidation(initialEmail) : false;
+    const nameIsValid = initialName ? nameValidation(initialName) : false;
+    const dateIsValid = dateValidation(initialDate);
+    const orderIsValid = orderValidation();
+
+    setFormValidation({
+      email: emailIsValid,
+      name: nameIsValid,
+      date: dateIsValid,
+      order: orderIsValid,
+      errorText: "",
+    });
   };
 
   useEffect(() => {
     validateOnMount();
   }, []);
+
+  useEffect(() => {
+    console.log(formValidation);
+  }, [formValidation]);
 
   const submitOrder = async (formData: FormData) => {
     setLoading(true);
@@ -151,26 +168,26 @@ export default function ReviewPage() {
     }
 
     if (
-      order.currentOrder?.meals.length === 0 ||
-      order.currentOrder?.drinks.length === 0 ||
-      order.currentOrder === undefined
+      order.meals.length === 0 ||
+      order.drinks.length === 0 ||
+      order === undefined
     ) {
       alert("Please select some dishes or drinks before placing an order!");
       router.push("/dishes");
       return;
     } else {
       const result = await uploadOrder(
-        order.currentOrder,
+        order,
         new Date(),
         date,
         name.toString(),
         email.toString(),
-        order.getCurrentPrice(),
-        order.currentOrder.id
+        currentPrice,
+        order.id
       );
       localStorage.setNameLS(name.toString());
       localStorage.setEmailLS(email.toString());
-      order.cancelOrder();
+      dispatch(cancelOrder());
       router.push(`/order/${email}/${result?.id}`);
     }
     setLoading(false);
@@ -212,9 +229,9 @@ export default function ReviewPage() {
                 onBlur={(e) => handleNameBlur(e)}
               />
               <div className="flex flex-row w-full justify-end">
-                {nameValid === undefined ? (
+                {formValidation.name === undefined ? (
                   <></>
-                ) : nameValid ? (
+                ) : formValidation.name ? (
                   <FaCircleCheck className="relative -top-7 right-2 text-green-500 text-lg" />
                 ) : (
                   <FaCircleXmark className="relative -top-7 right-2 text-red-500 text-lg" />
@@ -232,9 +249,9 @@ export default function ReviewPage() {
                 onBlur={(e) => handleEmailBlur(e)}
               />
               <div className="flex flex-row w-full justify-end">
-                {emailValid === undefined ? (
+                {formValidation.email === undefined ? (
                   <div></div>
-                ) : emailValid ? (
+                ) : formValidation.email ? (
                   <FaCircleCheck className="relative -top-7 right-2 text-green-500 text-lg" />
                 ) : (
                   <FaCircleXmark className="relative -top-7 right-2 text-red-500 text-lg" />
@@ -253,6 +270,7 @@ export default function ReviewPage() {
                     onBlur={() => handleDateBlur(selectedDate)}
                     format="dd/MM/yyyy HH:mm"
                     defaultValue={selectedDate}
+                    value={selectedDate}
                     hideHours={(hour) =>
                       hour < 12 ||
                       hour > 22 ||
@@ -273,7 +291,7 @@ export default function ReviewPage() {
               disabled={isFormValid ? false : true}
               className="bg-green-700 text-white text-xl font-bold rounded-md p-2 w-full mt-auto h-12 md:h-24 hover:bg-green-500 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
-              {isFormValid ? "Place order" : errorText}
+              {isFormValid ? "Place order" : formValidation.errorText}
             </button>
           </form>
         </div>

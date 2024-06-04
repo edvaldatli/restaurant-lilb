@@ -1,15 +1,18 @@
-import { useOrder } from "../context/OrderContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
+import { getCurrentPrice, selectOrder } from "@/features/order/selectors";
 
 export default function OrderCard() {
-  const order = useOrder();
+  const order = useSelector((state: RootState) => selectOrder(state));
+  const currentPrice = useSelector(getCurrentPrice);
 
   return (
     <div className="flex flex-col w-full h-full justify-between bg-zinc-600 shadow-xl rounded-xl p-4">
-      {order.currentOrder && (
+      {order && (
         <div className="flex flex-col gap-2 overflow-auto">
           <h2 className="text-2xl font-bold">Your order:</h2>
           <ul className="flex flex-col p-2 gap-2">
-            {order.currentOrder.meals.map(({ meal, quantity }) => (
+            {order.meals.map(({ meal, quantity }) => (
               <li
                 key={meal.idMeal}
                 className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
@@ -26,7 +29,7 @@ export default function OrderCard() {
                 </div>
               </li>
             ))}
-            {order.currentOrder.drinks.map(({ drink, quantity }) => (
+            {order.drinks.map(({ drink, quantity }) => (
               <li
                 key={drink.idDrink}
                 className="flex flex-col justify-between bg-white rounded-xl text-black p-2 shadow-lg"
@@ -47,9 +50,7 @@ export default function OrderCard() {
         </div>
       )}
       <div className="flex flex-row items-center p-4 bg-zinc-500 rounded-xl">
-        <h3 className="text-lg font-bold">
-          Total: {order.getCurrentPrice()} kr
-        </h3>
+        <h3 className="text-lg font-bold">Total: {currentPrice} kr</h3>
       </div>
     </div>
   );

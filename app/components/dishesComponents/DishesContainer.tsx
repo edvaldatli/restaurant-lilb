@@ -1,14 +1,14 @@
 import PocketBase from "pocketbase";
 import { MealType } from "@/app/types/types";
 import { useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa";
-import { AnimatePresence, Reorder, motion } from "framer-motion";
+import { Reorder } from "framer-motion";
 import { useMediaQuery } from "../../utils/mobileFunctions";
-
-import { useOrder } from "@/app/context/OrderContext";
-import ItemImage from "../ItemImage";
 import toast, { Toaster } from "react-hot-toast";
 import DishCard from "../ItemCard";
+
+import { useSelector, useDispatch } from "react-redux";
+import { updateDishes } from "@/features/order/orderSlice";
+import { RootState } from "@/app/store";
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_DB_HOST);
 enum foodCategories {
@@ -20,8 +20,8 @@ enum foodCategories {
 }
 
 export default function DishesContainer() {
-  const order = useOrder();
-  const [meals, setMeals] = useState<MealType[]>([]);
+  const order = useSelector((state: RootState) => state.order);
+  const dispatch = useDispatch();
   const [displayDishes, setDisplayDishes] = useState<MealType[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<foodCategories>(
     foodCategories.Beef
@@ -39,7 +39,6 @@ export default function DishesContainer() {
       meal.strCategory = categoryFilter;
     });
 
-    setMeals(data.meals);
     setDisplayDishes(data.meals);
   };
 
@@ -48,13 +47,12 @@ export default function DishesContainer() {
   };
 
   const addDish = (dish: MealType) => {
-    order.updateDishes(dish);
+    dispatch(updateDishes(dish));
     if (!isDesktop) toast.success(`🍲 ${dish.strMeal} added to cart`);
   };
 
   useEffect(() => {
     fetchDishes();
-    console.log("Meals:", meals);
   }, [categoryFilter]);
 
   return (
@@ -119,7 +117,12 @@ export default function DishesContainer() {
             key={meal.idMeal}
             className="flex flex-col gap-4 flex-grow w-full"
           >
-            <DishCard item={meal} onAddToCart={() => addDish(meal)} />
+            <DishCard
+              item={meal}
+              onAddToCart={() => {
+                addDish(meal);
+              }}
+            />
           </Reorder.Item>
         ))}
       </Reorder.Group>

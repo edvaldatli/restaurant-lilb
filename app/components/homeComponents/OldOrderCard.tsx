@@ -9,10 +9,9 @@ export default function OldOrderCard() {
 
   const handleSubmition = (data: FormData) => {
     const email = data.get("email");
-    router.push(`/order/${email}`);
+    router.push(`/order/${email}/_`);
   };
 
-  const { name } = useLocalStorage();
   return (
     <div className="flex flex-col bg-request-orange h-full rounded-xl p-10 shadow-lg gap-4">
       <h2 className="text-4xl font-bold">Looking for your order?</h2>
