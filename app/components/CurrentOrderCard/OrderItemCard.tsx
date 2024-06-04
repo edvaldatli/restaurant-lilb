@@ -13,12 +13,6 @@ const isMealType = (item: MealType | CocktailType): item is MealType => {
   return (item as MealType).idMeal !== undefined;
 };
 
-const isCocktailType = (
-  item: MealType | CocktailType
-): item is CocktailType => {
-  return (item as CocktailType).idDrink !== undefined;
-};
-
 const OrderItemCard = React.memo(
   ({ item, quantity, removeItem }: OrderItemType) => (
     <motion.li

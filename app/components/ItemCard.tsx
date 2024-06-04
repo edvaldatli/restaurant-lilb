@@ -12,6 +12,7 @@ export default function DishCard({ item, onAddToCart }: DishCardProps) {
   const isMeal = (item: MealType | CocktailType): item is MealType => {
     return (item as MealType).strMealThumb !== undefined;
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, translateY: 20 }}

@@ -1,3 +1,4 @@
+"use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
@@ -5,16 +6,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { LocalStorageProvider } from "./context/LocalStorage";
 import OrderProvider from "./context/OrderContext";
-import { Metadata } from "next";
 import Navbar from "./components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+import { store } from "./store";
+import { Provider } from "react-redux";
 
-export const metadata: Metadata = {
-  title: "Lil Bits",
-  description:
-    "Lil Bits is a restaurant that serves small portions of food and drinks.",
-};
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -28,14 +25,14 @@ export default function RootLayout({
         <SpeedInsights />
       </head>
       <body>
-        <OrderProvider>
+        <Provider store={store}>
           <LocalStorageProvider>
             <Navbar />
             <div className="px-4 lg:px-2 2xl:px-72 pt-6 pb-8 lg:pt-24 h-screen max-h-screen overflow-hidden">
               {children}
             </div>
           </LocalStorageProvider>
-        </OrderProvider>
+        </Provider>
       </body>
     </html>
   );
