@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { CustomProvider, DatePicker, Loader } from "rsuite";
 import "rsuite/DatePicker/styles/index.css";
-import { useOrder } from "../context/OrderContext";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "../context/LocalStorage";
 import { uploadOrder } from "../utils/serverFunctions";
