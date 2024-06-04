@@ -10,15 +10,23 @@ export interface OrderState {
 }
 
 const initializeState = (): OrderState["order"] => {
-    const order = localStorage.getItem("order");
-    if (order) {
-        return JSON.parse(order);
+    if (typeof window !== "undefined") {
+        const order = localStorage.getItem("order");
+        if (order) {
+            return JSON.parse(order);
+        }
+        return {
+            id: "",
+            meals: [],
+            drinks: []
+        };
+    } else {
+        return {
+            id: "",
+            meals: [],
+            drinks: []
+        };
     }
-    return {
-        id: "",
-        meals: [],
-        drinks: []
-    };
 };
 
 const initialState: OrderState = {
