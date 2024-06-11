@@ -16,13 +16,11 @@ export default function DishesPage() {
   const [scope, animate] = useAnimate();
   const drawerOpen = useSelector((state: RootState) => state.order.cartDrawer);
   const isDesktop = useMediaQuery(768);
+
   useEffect(() => {
     animate("div", { opacity: 1 }, { delay: stagger(0.04) });
   });
 
-  useEffect(() => {
-    console.log(drawerOpen);
-  }, [drawerOpen]);
   return (
     <div
       className="flex flex-row gap-8 h-full text-white drop-shadow-lg"

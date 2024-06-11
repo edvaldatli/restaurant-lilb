@@ -5,8 +5,8 @@ export default function WelcomeCard() {
   const { name } = useLocalStorage();
   return (
     <>
-      <div className="flex flex-col justify-between bg-request-orange h-full rounded-xl p-10 shadow-lg">
-        <div>
+      <div className="flex flex-col gap-2 justify-between bg-request-orange h-full rounded-xl p-6 lg:p-10 shadow-lg">
+        <div className="flex flex-col gap-2">
           {!name && (
             <>
               <h2 className="text-2xl lg:text-4xl font-bold">
@@ -19,10 +19,10 @@ export default function WelcomeCard() {
           )}
           {name && (
             <>
-              <h2 className="lg:text-4xl font-bold">
+              <h2 className="text-2xl lg:text-4xl font-bold line-clamp-2">
                 Good to see you again, {name}!
               </h2>
-              <p className="lg:text-xl font-semibold">
+              <p className="text-sm lg:text-xl font-semibold">
                 Want us to take you on a tasty ride again?
               </p>
             </>
@@ -32,7 +32,7 @@ export default function WelcomeCard() {
           <RoutingButton
             text="Start ordering"
             type="forward"
-            className="flex flex-row text-nowrap items-center h-10 p-4 w-full justify-center rounded-xl font-bold text-white bg-green-600 hover:bg-request-green transition-colors"
+            className="flex flex-row text-nowrap items-center h-10 p-4 w-full justify-center rounded-xl font-bold text-white bg-green-700 hover:bg-request-green transition-colors"
             disabled={false}
           />
         </div>

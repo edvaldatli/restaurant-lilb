@@ -3,10 +3,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import RoutingButton from "./RoutingButton";
 import { useMediaQuery } from "../utils/mobileFunctions";
-import { FaCartShopping } from "react-icons/fa6";
-import { toggleCartDrawer } from "@/features/order/orderSlice";
+import { FaBurger, FaCartShopping, FaListCheck } from "react-icons/fa6";
+import { toggleDrawer } from "@/features/order/orderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
+import { FaHamburger, FaList } from "react-icons/fa";
 
 export default function Navbar() {
   const navItems = [
@@ -25,7 +26,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
 
   const cartClick = () => {
-    dispatch(toggleCartDrawer());
+    dispatch(toggleDrawer());
   };
 
   return (
@@ -102,6 +103,15 @@ export default function Navbar() {
               className="flex flex-row items-center gap-2 text-lg"
             />
           </div>
+        )}
+        {path.includes("/order") && !isDesktop && (
+          <button
+            className="flex flex-row justify-end items-center gap-2 w-1/3 fixed right-0 top-3 text-base pr-2"
+            onClick={() => dispatch(toggleDrawer())}
+          >
+            <p>Orders</p>
+            <FaListCheck className="text-lg" />
+          </button>
         )}
       </nav>
     </>

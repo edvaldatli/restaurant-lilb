@@ -4,8 +4,8 @@ import { OrderType, getAllOrdersByEmail } from "../../../utils/serverFunctions";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaAngleLeft, FaAngleRight, FaEdit } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { setCurrentEditOrder } from "@/features/order/orderSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentEditOrder, toggleDrawer } from "@/features/order/orderSlice";
 import {
   formatDate,
   formatBookingDate,
@@ -16,9 +16,14 @@ import "rsuite/Placeholder/styles/index.css";
 import { Loader } from "rsuite";
 import { AnimatePresence, motion } from "framer-motion";
 import ItemImage from "@/app/components/ItemImage";
+import OrdersDrawer from "@/app/components/MobileComponents/OrdersDrawer";
+import { RootState } from "@/app/store";
+import OrdersList from "@/app/components/OrdersList";
+import { FaListCheck } from "react-icons/fa6";
 
 export default function OrderPage() {
   const dispatch = useDispatch();
+  const drawerState = useSelector((state: RootState) => state.order.cartDrawer);
   const router = useRouter();
   const { email: orderEmail, collectionId: orderId } = useParams();
   const [orders, setOrders] = useState<OrderType[]>();
@@ -90,47 +95,21 @@ export default function OrderPage() {
     return (
       <AnimatePresence>
         <motion.div
-          className="flex flex-col bg-request-orange w-full h-full rounded-xl text-white"
+          className="flex flex-col bg-request-orange w-full h-full rounded-xl text-white lg:pt-0 pt-16"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <div className="flex flex-row w-full justify-start h-full">
-            <ul className="flex flex-col w-1/3 bg-zinc-700 border-black overflow-auto ">
-              {orders.map((order) => (
-                <li
-                  className={`flex flex-row justify-between items-center gap-4 w-full p-4 border-b-2 transition-colors select-none ${
-                    selectedOrder?.id === order.id
-                      ? "bg-request-orange text-white hover:bg-request-orange"
-                      : "bg-white text-black"
-                  }`}
-                  key={order.id}
-                  onClick={() => setSelcectedOrder(order)}
-                >
-                  {checkBookingHandled(order.time) === false && (
-                    <span className="relative flex w-2 h-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-full w-full bg-sky-500"></span>
-                    </span>
-                  )}
-                  <div className="flex flex-col w-2/3">
-                    <p className="text-sm font-semibold">Table:</p>
-                    <p className="text-xs">{formatBookingDate(order.time)}</p>
-                  </div>
-                  <div className="flex flex-col justify-between">
-                    <h3 className="text-sm text-nowrap">
-                      {formatDate(order.orderTimestamp)}
-                    </h3>
-                    <h3 className="text-sm font-semibold text-nowrap">
-                      {order.total} kr
-                    </h3>
-                  </div>
-                  <FaAngleRight />
-                </li>
-              ))}
-            </ul>
+            <motion.div className="hidden lg:block">
+              <OrdersList
+                orders={orders}
+                selectOrder={setSelcectedOrder}
+                selectedOrder={selectedOrder}
+              />
+            </motion.div>
             <div className="overflow-auto h-full w-full">
               <AnimatePresence>
-                {selectedOrder && (
+                {selectedOrder ? (
                   <motion.div
                     className="flex flex-col p-4 h-full gap-2"
                     initial={{ opacity: 0 }}
@@ -230,11 +209,33 @@ export default function OrderPage() {
                       </h3>
                     </div>
                   </motion.div>
+                ) : (
+                  <motion.div
+                    className="flex flex-col justify-center items-center h-full w-full"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <h1 className="text-xl font-bold">Select an order</h1>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </div>
         </motion.div>
+        {drawerState && (
+          <motion.div
+            className="fixed h-full w-full top-0"
+            initial={{ translateY: "100%" }}
+            animate={{ translateY: 0, transition: { type: "just" } }}
+            key={"drawer"}
+          >
+            <OrdersDrawer
+              orders={orders}
+              selectOrder={(order) => setSelcectedOrder(order)}
+              currentlySelectedOrder={selectedOrder}
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
     );
 }

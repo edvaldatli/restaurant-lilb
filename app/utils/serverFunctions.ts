@@ -41,25 +41,27 @@ export async function uploadOrder(
 
   if (data.id) {
     const checkData = await pb.collection("order").getOne(data.id);
-    console.log(checkData);
     if (!checkData) {
       throw new Error("Order does not exist");
     }
+
     const results = await pb.collection("order").update(data.id, data);
-    console.log("Order updated");
+
     return results;
   } else {
     const results = await pb.collection("order").create(data);
-    console.log(results);
+
     if (!results) {
       throw new Error("Error creating order");
     }
+
     return results;
   }
 }
 
 export async function getOrderById(id: string) {
   const record: OrderType = await pb.collection("order").getOne(id);
+
   return record;
 }
 
@@ -74,6 +76,7 @@ export async function getAllOrdersByEmail(email: string): Promise<OrderType[]> {
   const result = await pb
     .collection("order")
     .getList(1, 100, { filter: `email="${email}"`, sort: "-time" });
+
   const records: OrderType[] = result.items.map((item: any) => ({
     id: item.id,
     firstName: item.firstName,
@@ -84,6 +87,6 @@ export async function getAllOrdersByEmail(email: string): Promise<OrderType[]> {
     drinks: item.drinks,
     total: item.total,
   }));
-  console.log(records);
+
   return records;
 }

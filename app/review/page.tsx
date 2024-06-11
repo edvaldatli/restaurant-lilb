@@ -4,7 +4,7 @@ import { CustomProvider, DatePicker, Loader } from "rsuite";
 import "rsuite/DatePicker/styles/index.css";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "../context/LocalStorage";
-import { uploadOrder } from "../utils/serverFunctions";
+import { OrderType, uploadOrder } from "../utils/serverFunctions";
 import { motion } from "framer-motion";
 import is_IS from "../locales/is_IS";
 import { getNextOpeningQuarter, getNextQuarterHour } from "../utils/dateFormat";
@@ -18,7 +18,6 @@ import dynamic from "next/dynamic";
 
 export default function ReviewPage() {
   const localStorage = useLocalStorage();
-  const state = useSelector((state: RootState) => state);
   const order = useSelector((state: RootState) => state.order.order);
   const currentPrice = useSelector(
     (state: RootState) => state.order.order.totalPrice
@@ -52,7 +51,8 @@ export default function ReviewPage() {
     name: string,
     email: string,
     date: Date,
-    state: RootState
+    meals: OrderType["meals"],
+    drinks: OrderType["drinks"]
   ): { isValid: boolean; errorText: string } => {
     if (!validation.emailValidation(email))
       return { isValid: false, errorText: "Invalid email" };
@@ -60,18 +60,19 @@ export default function ReviewPage() {
       return { isValid: false, errorText: "Invalid name" };
     if (!validation.dateValidation(date))
       return { isValid: false, errorText: "Invalid date" };
-    if (!validation.orderValidation(state))
+    if (!validation.orderValidation(meals, drinks))
       return { isValid: false, errorText: "Invalid order" };
     return { isValid: true, errorText: "" };
   };
 
-  const validateAndSetFormState = (
-    name: string,
-    email: string,
-    date: Date,
-    state: RootState
-  ) => {
-    const { isValid, errorText } = validateForm(name, email, date, state);
+  const validateAndSetFormState = (name: string, email: string, date: Date) => {
+    const { isValid, errorText } = validateForm(
+      name,
+      email,
+      date,
+      order.meals,
+      order.drinks
+    );
     setFormValues({
       ...formValues,
       name: { value: name, isValid: validation.nameValidation(name) },
@@ -86,15 +87,9 @@ export default function ReviewPage() {
     validateAndSetFormState(
       formValues.name.value,
       formValues.email.value,
-      selectedDate,
-      state
+      selectedDate
     );
-    console.log(formValues);
   };
-
-  useEffect(() => {
-    console.log(formValues);
-  }, [formValues]);
 
   useEffect(() => {
     handleBlur();

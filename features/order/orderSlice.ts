@@ -136,7 +136,7 @@ export const orderSlice = createSlice({
                 state.order.drinks.reduce((sum, item) => sum + item.drink.price * item.quantity, 0);
             localStorage.setItem("order", JSON.stringify(state.order));
         },
-        toggleCartDrawer: (state) => {
+        toggleDrawer: (state) => {
             state.cartDrawer = !state.cartDrawer;
         }
     },
@@ -149,7 +149,7 @@ export const {
     removeDish,
     cancelOrder,
     setCurrentEditOrder,
-    toggleCartDrawer
+    toggleDrawer
 } = orderSlice.actions;
 
 export default orderSlice.reducer;

@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <div
       id="homewrapper"
-      className="grid grid-rows-4 grid-cols-2 lg:grid-rows-4 lg:grid-cols-3 h-full w-full text-white gap-6 pt-16"
+      className="grid grid-rows-4 grid-cols-2 lg:grid-rows-4 lg:grid-cols-3 h-full w-full text-white gap-6 pt-16 px-4"
       ref={scope}
     >
       <AnimatePresence>
