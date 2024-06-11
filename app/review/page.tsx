@@ -7,14 +7,18 @@ import { useLocalStorage } from "../context/LocalStorage";
 import { uploadOrder } from "../utils/serverFunctions";
 import { motion } from "framer-motion";
 import is_IS from "../locales/is_IS";
-import { getNextQuarterHour } from "../utils/dateFormat";
+import { getNextOpeningQuarter, getNextQuarterHour } from "../utils/dateFormat";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
-import OrderCard from "../components/OrderCard";
+const OrderCard = dynamic(() => import("../components/OrderCard"));
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { cancelOrder } from "@/features/order/orderSlice";
+import validation from "../utils/validation";
+import dynamic from "next/dynamic";
 
 export default function ReviewPage() {
+  const localStorage = useLocalStorage();
+  const state = useSelector((state: RootState) => state);
   const order = useSelector((state: RootState) => state.order.order);
   const currentPrice = useSelector(
     (state: RootState) => state.order.order.totalPrice
@@ -22,72 +26,109 @@ export default function ReviewPage() {
   const dispatch = useDispatch();
 
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<Date>(getNextQuarterHour());
-  const [formValidation, setFormValidation] = useState<{
-    email: boolean;
-    name: boolean;
-    date: boolean;
-    order: boolean;
-    errorText: string;
-  }>({
-    email: false,
-    name: false,
-    date: false,
-    order: false,
-    errorText: "error",
+  const [selectedDate, setSelectedDate] = useState<Date>(
+    getNextOpeningQuarter()
+  );
+  const [formValues, setFormValues] = useState({
+    name: {
+      value: localStorage.name || "",
+      isValid: localStorage.name ? true : false,
+    },
+    email: {
+      value: localStorage.email || "",
+      isValid: localStorage.email ? true : false,
+    },
+    date: {
+      value: getNextQuarterHour(),
+      isValid: validation.dateValidation(getNextQuarterHour()),
+    },
+    isValid: false,
+    errorText: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
-  const localStorage = useLocalStorage();
   const date: Date = new Date();
 
-  const isFormValid =
-    formValidation.email &&
-    formValidation.name &&
-    formValidation.date &&
-    formValidation.order;
-
-  const emailValidation = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const result = emailRegex.test(email);
-    setFormValidation((prev) => ({
-      ...prev,
-      email: result,
-      errorText: result ? "" : "Invalid email",
-    }));
-    console.log(result);
-    return result;
+  const validateForm = (
+    name: string,
+    email: string,
+    date: Date,
+    state: RootState
+  ): { isValid: boolean; errorText: string } => {
+    if (!validation.emailValidation(email))
+      return { isValid: false, errorText: "Invalid email" };
+    if (!validation.nameValidation(name))
+      return { isValid: false, errorText: "Invalid name" };
+    if (!validation.dateValidation(date))
+      return { isValid: false, errorText: "Invalid date" };
+    if (!validation.orderValidation(state))
+      return { isValid: false, errorText: "Invalid order" };
+    return { isValid: true, errorText: "" };
   };
 
-  const nameValidation = (name: string) => {
-    const result = name.length > 0;
-    setFormValidation((prev) => ({
-      ...prev,
-      name: result,
-      errorText: result! ? "" : "Invalid name",
-    }));
-    return result;
+  const validateAndSetFormState = (
+    name: string,
+    email: string,
+    date: Date,
+    state: RootState
+  ) => {
+    const { isValid, errorText } = validateForm(name, email, date, state);
+    setFormValues({
+      ...formValues,
+      name: { value: name, isValid: validation.nameValidation(name) },
+      email: { value: email, isValid: validation.emailValidation(email) },
+      date: { value: date, isValid: validation.dateValidation(date) },
+      isValid: isValid,
+      errorText: errorText,
+    });
   };
 
-  const dateValidation = (date: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dateCopy = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
+  const handleBlur = () => {
+    validateAndSetFormState(
+      formValues.name.value,
+      formValues.email.value,
+      selectedDate,
+      state
+    );
+    console.log(formValues);
+  };
+
+  useEffect(() => {
+    console.log(formValues);
+  }, [formValues]);
+
+  useEffect(() => {
+    handleBlur();
+  }, []);
+
+  const submitOrder = async (formData: FormData) => {
+    setLoading(true);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const date = formValues.date.value;
+
+    if (!formValues.isValid) {
+      alert(
+        "Please fill out all fields correctly before submitting the order!"
+      );
+      setLoading(false);
+      return;
+    }
+
+    const result = await uploadOrder(
+      order,
+      new Date(),
+      date,
+      name,
+      email,
+      currentPrice,
+      order.id
     );
 
-    const isValid = !(
-      dateCopy < today ||
-      (dateCopy.getTime() === today.getTime() && new Date().getHours() >= 22)
-    );
-
-    setFormValidation((prev) => ({
-      ...prev,
-      date: isValid,
-      errorText: isValid ? "" : "Invalid date",
-    }));
-    return isValid;
+    localStorage.setNameLS(name);
+    localStorage.setEmailLS(email);
+    dispatch(cancelOrder());
+    router.push(`/order/${email}/${result?.id}`);
+    setLoading(false);
   };
 
   const shouldDisableDate = (date: Date) => {
@@ -103,93 +144,6 @@ export default function ReviewPage() {
       dateCopy < today ||
       (dateCopy.getTime() === today.getTime() && new Date().getHours() >= 22)
     );
-  };
-
-  const orderValidation = () => {
-    const isValid = order && order.meals.length > 0 && order.drinks.length > 0;
-    setFormValidation((prev) => ({
-      ...prev,
-      order: isValid,
-      errorText: isValid ? "" : "Invalid order",
-    }));
-    return isValid;
-  };
-
-  const handleNameBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    nameValidation(e.target.value);
-  };
-
-  const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    emailValidation(e.target.value);
-  };
-
-  const handleDateBlur = (date: Date) => {
-    dateValidation(date);
-  };
-
-  const validateOnMount = () => {
-    const initialEmail = localStorage.email;
-    const initialName = localStorage.name;
-    const initialDate = selectedDate;
-
-    const emailIsValid = initialEmail ? emailValidation(initialEmail) : false;
-    const nameIsValid = initialName ? nameValidation(initialName) : false;
-    const dateIsValid = dateValidation(initialDate);
-    const orderIsValid = orderValidation();
-
-    setFormValidation({
-      email: emailIsValid,
-      name: nameIsValid,
-      date: dateIsValid,
-      order: orderIsValid,
-      errorText: "",
-    });
-  };
-
-  useEffect(() => {
-    validateOnMount();
-  }, []);
-
-  useEffect(() => {
-    console.log(formValidation);
-  }, [formValidation]);
-
-  const submitOrder = async (formData: FormData) => {
-    setLoading(true);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const date = selectedDate;
-
-    if (!name || !email) {
-      alert("Please fill out all fields before submitting the order!");
-      setLoading(false);
-      return;
-    }
-
-    if (
-      order.meals.length === 0 ||
-      order.drinks.length === 0 ||
-      order === undefined
-    ) {
-      alert("Please select some dishes or drinks before placing an order!");
-      router.push("/dishes");
-      return;
-    } else {
-      const result = await uploadOrder(
-        order,
-        new Date(),
-        date,
-        name.toString(),
-        email.toString(),
-        currentPrice,
-        order.id
-      );
-      localStorage.setNameLS(name.toString());
-      localStorage.setEmailLS(email.toString());
-      dispatch(cancelOrder());
-      router.push(`/order/${email}/${result?.id}`);
-    }
-    setLoading(false);
   };
 
   if (loading) {
@@ -225,12 +179,21 @@ export default function ReviewPage() {
                 placeholder="Your name"
                 defaultValue={localStorage.name || ""}
                 className="w-full rounded-md py-2 px-3 text-sm text-zinc-700 hover:border-blue-500 transition-colors border focus:border-blue-500"
-                onBlur={(e) => handleNameBlur(e)}
+                onChange={(e) =>
+                  setFormValues({
+                    ...formValues,
+                    name: {
+                      value: e.target.value,
+                      isValid: validation.nameValidation(e.target.value),
+                    },
+                  })
+                }
+                onBlur={() => handleBlur()}
               />
               <div className="flex flex-row w-full justify-end">
-                {formValidation.name === undefined ? (
+                {formValues.name === undefined ? (
                   <></>
-                ) : formValidation.name ? (
+                ) : formValues.name.isValid ? (
                   <FaCircleCheck className="relative -top-7 right-2 text-green-500 text-lg" />
                 ) : (
                   <FaCircleXmark className="relative -top-7 right-2 text-red-500 text-lg" />
@@ -245,12 +208,21 @@ export default function ReviewPage() {
                 placeholder="Your E-mail"
                 defaultValue={localStorage.email || ""}
                 className="w-full rounded-md py-2 px-3 text-sm text-zinc-700 hover:border-blue-500 transition-colors border focus:border-blue-500"
-                onBlur={(e) => handleEmailBlur(e)}
+                onChange={(e) => {
+                  setFormValues({
+                    ...formValues,
+                    email: {
+                      value: e.target.value,
+                      isValid: validation.emailValidation(e.target.value),
+                    },
+                  });
+                }}
+                onBlur={() => handleBlur()}
               />
               <div className="flex flex-row w-full justify-end">
-                {formValidation.email === undefined ? (
+                {formValues.email === undefined ? (
                   <div></div>
-                ) : formValidation.email ? (
+                ) : formValues.email.isValid ? (
                   <FaCircleCheck className="relative -top-7 right-2 text-green-500 text-lg" />
                 ) : (
                   <FaCircleXmark className="relative -top-7 right-2 text-red-500 text-lg" />
@@ -266,7 +238,6 @@ export default function ReviewPage() {
                     name="date"
                     placeholder="Select date"
                     shouldDisableDate={shouldDisableDate}
-                    onBlur={() => handleDateBlur(selectedDate)}
                     format="dd/MM/yyyy HH:mm"
                     defaultValue={selectedDate}
                     value={selectedDate}
@@ -279,6 +250,7 @@ export default function ReviewPage() {
                     }
                     hideMinutes={(minute) => minute % 15 !== 0}
                     onSelect={(date) => setSelectedDate(date)}
+                    onBlur={() => handleBlur()}
                     className="w-full"
                   />
                 </CustomProvider>
@@ -287,10 +259,16 @@ export default function ReviewPage() {
 
             <button
               type="submit"
-              disabled={isFormValid ? false : true}
-              className="bg-green-700 text-white text-xl font-bold rounded-md p-2 w-full mt-auto h-12 md:h-24 hover:bg-green-500 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
+              disabled={formValues.isValid ? false : true}
+              className="flex flex-row items-center justify-center bg-green-700 text-white text-xl font-bold rounded-md  gap-2 p-2 w-full mt-auto h-12 md:h-24 hover:bg-green-500 transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
-              {isFormValid ? "Place order" : formValidation.errorText}
+              {loading ? (
+                <Loader size="sm" />
+              ) : formValues.isValid ? (
+                "Place order"
+              ) : (
+                formValues.errorText
+              )}
             </button>
           </form>
         </div>

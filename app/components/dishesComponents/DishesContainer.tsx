@@ -57,8 +57,17 @@ export default function DishesContainer() {
 
   return (
     <div className="flex flex-col items-center p-6 gap-4 w-full">
-      <Toaster />
-      <h2 className="text-2xl font-bold">Please select your dishes:</h2>
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#333",
+            color: "#fff",
+            position: "relative",
+            top: "40px",
+            userSelect: "none",
+          },
+        }}
+      />
       <div className="flex flex-row justify-start md:justify-center gap-2 md:gap-5 font-bold w-full overflow-x-scroll py-2">
         <button
           className={`p-3 bg-zinc-800 rounded-xl transition hover:scale-110 ${
@@ -104,7 +113,7 @@ export default function DishesContainer() {
       <Reorder.Group
         values={displayDishes}
         onReorder={setDisplayDishes}
-        className="flex flex-row flex-wrap gap-4 text-black h-full w-full"
+        className="flex flex-row flex-wrap gap-4 text-black "
       >
         {displayDishes.map((meal) => (
           <Reorder.Item

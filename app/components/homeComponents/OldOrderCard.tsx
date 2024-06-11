@@ -29,7 +29,7 @@ export default function OldOrderCard() {
           required
         />
         <div className="flex flex-row justify-end">
-          <button className="flex flex-row px-4 py-2 text-lg gap-2 items-center bg-green-600 rounded-xl font-bold">
+          <button className="flex flex-row px-4 py-2 text-lg gap-2 items-center bg-green-600 rounded-xl font-bold hover:bg-request-green transition-colors">
             Search
             <FaSearch />
           </button>

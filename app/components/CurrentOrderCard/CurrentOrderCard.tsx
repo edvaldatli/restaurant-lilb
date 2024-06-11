@@ -3,7 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { FaInfo } from "react-icons/fa";
 import RoutingButton from "../RoutingButton";
 import { usePathname } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import OrderItemCard from "./OrderItemCard";
 import { FaX } from "react-icons/fa6";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,8 +24,9 @@ export default function CurrentOrderCard() {
   const currentPath = usePathname();
 
   useEffect(() => {
-    console.log(totalPrice);
-  }, [order]);
+    console.log("rendered");
+  });
+
   return (
     <div className="flex flex-col h-full p-4 select-none">
       {order.id && (

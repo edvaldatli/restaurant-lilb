@@ -6,13 +6,11 @@ import Link from "next/link";
 import { FaAngleLeft, FaAngleRight, FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { setCurrentEditOrder } from "@/features/order/orderSlice";
-
 import {
   formatDate,
   formatBookingDate,
   checkBookingHandled,
 } from "../../../utils/dateFormat";
-
 import "rsuite/Loader/styles/index.css";
 import "rsuite/Placeholder/styles/index.css";
 import { Loader } from "rsuite";

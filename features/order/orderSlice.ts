@@ -1,7 +1,6 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { CocktailType, MealType } from "../../app/types/types";
 
-export const updatePrice = createAction<number>("order/updatePrice");
 
 export interface OrderState {
     order: {
@@ -9,7 +8,9 @@ export interface OrderState {
         meals: { meal: MealType; quantity: number }[];
         drinks: { drink: CocktailType; quantity: number }[];
         totalPrice: number
+        totalItems?: number;
     };
+    cartDrawer: boolean;
 }
 
 const initializeState = (): OrderState["order"] => {
@@ -18,20 +19,23 @@ const initializeState = (): OrderState["order"] => {
         if (order) {
             const orderParsed = JSON.parse(localStorage.getItem("order") as string) as OrderState["order"];
             orderParsed.totalPrice = updateTotalPrice(orderParsed);
+            orderParsed.totalItems = orderParsed.meals.reduce((sum, item) => sum + item.quantity, 0) + orderParsed.drinks.reduce((sum, item) => sum + item.quantity, 0);
             return orderParsed;
         }
         return {
             id: "",
             meals: [],
             drinks: [],
-            totalPrice: 0
+            totalPrice: 0,
+            totalItems: 0
         };
     } else {
         return {
             id: "",
             meals: [],
             drinks: [],
-            totalPrice: 0
+            totalPrice: 0,
+            totalItems: 0
         };
     }
 };
@@ -47,8 +51,20 @@ const updateTotalPrice = (order: OrderState["order"]): number => {
     return totalPrice;
 };
 
+const updateTotalItems = (order: OrderState["order"]): number => {
+    let totalItems = 0;
+    order.meals.forEach(({ quantity }) => {
+        totalItems += quantity;
+    });
+    order.drinks.forEach(({ quantity }) => {
+        totalItems += quantity;
+    });
+    return totalItems;
+}
+
 const initialState: OrderState = {
     order: initializeState(),
+    cartDrawer: false
 };
 
 export const orderSlice = createSlice({
@@ -63,6 +79,7 @@ export const orderSlice = createSlice({
                 state.order.drinks.push({ drink: action.payload, quantity: 1 });
             }
             state.order.totalPrice = updateTotalPrice(state.order);
+            state.order.totalItems = updateTotalItems(state.order);
             localStorage.setItem("order", JSON.stringify(state.order));
         },
         removeDrink: (state, action: PayloadAction<CocktailType>) => {
@@ -75,6 +92,7 @@ export const orderSlice = createSlice({
                 }
             }
             state.order.totalPrice = updateTotalPrice(state.order);
+            state.order.totalItems = updateTotalItems(state.order);
             localStorage.setItem("order", JSON.stringify(state.order));
         },
         updateDishes: (state, action: PayloadAction<MealType>) => {
@@ -86,6 +104,7 @@ export const orderSlice = createSlice({
                 state.order.meals.push({ meal: action.payload, quantity: 1 });
             }
             state.order.totalPrice = updateTotalPrice(state.order);
+            state.order.totalItems = updateTotalItems(state.order);
             localStorage.setItem("order", JSON.stringify(state.order));
         },
         removeDish: (state, action: PayloadAction<MealType>) => {
@@ -98,6 +117,7 @@ export const orderSlice = createSlice({
                 }
             }
             state.order.totalPrice = updateTotalPrice(state.order);
+            state.order.totalItems = updateTotalItems(state.order);
             localStorage.setItem("order", JSON.stringify(state.order));
         },
         cancelOrder: (state) => {
@@ -105,7 +125,8 @@ export const orderSlice = createSlice({
                 id: "",
                 meals: [],
                 drinks: [],
-                totalPrice: 0
+                totalPrice: 0,
+                totalItems: 0
             };
             localStorage.setItem("order", JSON.stringify(state.order));
         },
@@ -114,6 +135,9 @@ export const orderSlice = createSlice({
             state.order.totalPrice = state.order.meals.reduce((sum, item) => sum + item.meal.price * item.quantity, 0) +
                 state.order.drinks.reduce((sum, item) => sum + item.drink.price * item.quantity, 0);
             localStorage.setItem("order", JSON.stringify(state.order));
+        },
+        toggleCartDrawer: (state) => {
+            state.cartDrawer = !state.cartDrawer;
         }
     },
 });
@@ -124,7 +148,8 @@ export const {
     updateDishes,
     removeDish,
     cancelOrder,
-    setCurrentEditOrder
+    setCurrentEditOrder,
+    toggleCartDrawer
 } = orderSlice.actions;
 
 export default orderSlice.reducer;

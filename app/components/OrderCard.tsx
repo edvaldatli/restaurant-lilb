@@ -21,7 +21,7 @@ export default function OrderCard() {
                 <div className="flex flex-row gap-1">
                   <p className="text-xl">{quantity}x</p>
                   <p className="font-bold text-xl">{meal.strMeal}</p>
-                  <p className="font-bold ml-auto text-xl">
+                  <p className="font-bold ml-auto text-xl text-nowrap">
                     {meal.price * quantity} kr.
                   </p>
                 </div>
@@ -38,7 +38,7 @@ export default function OrderCard() {
                 <div className="flex flex-row gap-1">
                   <p className="text-xl">{quantity}x</p>
                   <p className="font-bold text-xl">{drink.strDrink}</p>
-                  <p className="font-bold ml-auto text-xl">
+                  <p className="font-bold ml-auto text-xl text-nowrap">
                     {drink.price * quantity} kr.
                   </p>
                 </div>

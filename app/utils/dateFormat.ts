@@ -20,6 +20,25 @@ export const checkBookingHandled = (bookingTime: Date) => {
   return time < now;
 };
 
+export const getNextOpeningQuarter = () => {
+  const now = new Date();
+  const openingHour = 12;
+  const openingMinute = 0;
+
+  const minutes = now.getMinutes();
+  const nextQuarter = Math.ceil(minutes / 15) * 15;
+  now.setMinutes(nextQuarter, 0, 0);
+
+  const openingTime = new Date();
+  openingTime.setHours(openingHour, openingMinute, 0, 0);
+
+  if (now < openingTime) {
+    return openingTime;
+  }
+
+  return now;
+}
+
 export const getNextQuarterHour = () => {
   const now = new Date();
   const openingHour = 12; // Assuming opening time is 12:00 PM

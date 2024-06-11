@@ -1,18 +1,15 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import debounce from "lodash/debounce";
 import { CocktailType } from "../../types/types";
 import toast, { Toaster } from "react-hot-toast";
 import { useMediaQuery } from "../../utils/mobileFunctions";
 import { Reorder } from "framer-motion";
 import DishCard from "../ItemCard";
-
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateDrinks } from "@/features/order/orderSlice";
-import { RootState } from "@/app/store";
 
 export default function DrinksContainer() {
-  const order = useSelector((state: RootState) => state.order);
   const dispatch = useDispatch();
   const [query, setQuery] = useState<string>("a");
   const [results, setResults] = useState<CocktailType[]>([]);
@@ -62,7 +59,17 @@ export default function DrinksContainer() {
 
   return (
     <div className="flex flex-col items-center p-6 gap-6 h-full">
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#333",
+            color: "#fff",
+            position: "relative",
+            top: "40px",
+            userSelect: "none",
+          },
+        }}
+      />
       <input
         type="text"
         value={query}

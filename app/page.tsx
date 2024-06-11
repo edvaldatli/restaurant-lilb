@@ -1,11 +1,5 @@
 "use client";
-import {
-  motion,
-  AnimatePresence,
-  animate,
-  stagger,
-  useAnimate,
-} from "framer-motion";
+import { motion, AnimatePresence, stagger, useAnimate } from "framer-motion";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import WelcomeCard from "./components/homeComponents/WelcomeCard";
@@ -30,19 +24,10 @@ export default function Home() {
   return (
     <div
       id="homewrapper"
-      className="grid lg:grid-rows-4 lg:grid-cols-3 h-full w-full text-white gap-6"
+      className="grid grid-rows-4 grid-cols-2 lg:grid-rows-4 lg:grid-cols-3 h-full w-full text-white gap-6 pt-16"
       ref={scope}
     >
       <AnimatePresence>
-        <motion.div
-          id="card"
-          key={"Welcome card"}
-          className="col-span-2 row-span-2 rounded-xl"
-          initial={{ opacity: 0, translateX: -80 }}
-          animate={{ opacity: 1, translateX: 0 }}
-        >
-          <WelcomeCard />
-        </motion.div>
         <motion.div
           id="card"
           key={"Logo card"}
@@ -52,16 +37,18 @@ export default function Home() {
         >
           <LogoCard />
         </motion.div>
-        {/* Mikið issue að reyna fitta þetta Carousel og þess vegna er kóðinn skrýtinn */}
         <motion.div
           id="card"
-          key={"Carousel card"}
-          className="hidden lg:block col-span-1 row-span-2 overflow-hidden rounded-xl"
+          key={"Welcome card"}
+          className="col-span-2 row-span-1 lg:col-span-2 lg:row-span-2 rounded-xl"
           initial={{ opacity: 0, translateX: -80 }}
           animate={{ opacity: 1, translateX: 0 }}
         >
-          <Carousel images={images} />
+          <WelcomeCard />
         </motion.div>
+
+        {/* Mikið issue að reyna fitta þetta Carousel og þess vegna er kóðinn skrýtinn */}
+
         <motion.div
           id="card"
           key={"Check order card"}
@@ -70,6 +57,15 @@ export default function Home() {
           animate={{ opacity: 1, translateX: 0 }}
         >
           <OldOrderCard />
+        </motion.div>
+        <motion.div
+          id="card"
+          key={"Carousel card"}
+          className="hidden lg:block col-span-1 row-span-2 overflow-hidden rounded-xl"
+          initial={{ opacity: 0, translateX: -80 }}
+          animate={{ opacity: 1, translateX: 0 }}
+        >
+          <Carousel images={images} />
         </motion.div>
       </AnimatePresence>
     </div>
